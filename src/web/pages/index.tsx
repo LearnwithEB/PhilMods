@@ -13,7 +13,7 @@ const ACCENT_PINK = "#ff41b4";
 function LoadingScreen({ onStart }: { onStart: () => void }) {
   const [loadingText, setLoadingText] = useState("");
   const [showButton, setShowButton] = useState(false);
-  const fullText = "INITIALIZING GO MODS PROTOCOL...";
+  const fullText = "INITIALIZING PHILLMODS PROTOCOL...";
 
   useEffect(() => {
     let index = 0;
@@ -313,7 +313,7 @@ function TerminalConsole({ nostalgiaMode, onToggle }: { nostalgiaMode: boolean; 
           <div className="w-3 h-3 rounded-full bg-red-500" />
           <div className="w-3 h-3 rounded-full bg-yellow-500" />
           <div className="w-3 h-3 rounded-full" style={{ backgroundColor: terminalColor }} />
-          <span className="ml-4 text-xs" style={{ color: terminalColor }}>go_mods_console.exe</span>
+          <span className="ml-4 text-xs" style={{ color: terminalColor }}>phillmods_console.exe</span>
         </div>
         <pre className="whitespace-pre-wrap leading-relaxed" style={{ color: terminalColor }}>
           {displayedText}
@@ -357,7 +357,7 @@ function MobileFallback({ scrollProgress }: { scrollProgress: number }) {
           ))}
         </div>
         <h1 className="text-6xl md:text-8xl font-black text-center mb-4 tracking-tighter">
-          <span className="text-[#00ff41]">GO</span> MODS
+          <span className="text-[#00ff41]">PHILL</span>MODS
         </h1>
         <p className="text-center text-[#00ff41]/70 font-mono text-sm md:text-base max-w-md">
           Innovative 3D Modeling & Animation<br />Ready for the Metaverse
@@ -433,7 +433,7 @@ function Index() {
         {/* Hero section */}
         <section className="h-screen flex flex-col items-center justify-center pointer-events-none">
           <h1 className="text-7xl md:text-[12rem] font-black tracking-[-0.05em] text-white/90 leading-none text-center">
-            <span className="text-[#00ff41]">GO</span> MODS
+            <span className="text-[#00ff41]">PHILL</span>MODS
           </h1>
           <p className="mt-6 text-center font-mono text-[#00ff41]/80 text-sm md:text-lg tracking-wider">
             Innovative 3D Modeling & Animation
@@ -458,7 +458,7 @@ function Index() {
 
         {/* Footer */}
         <footer className="py-12 text-center font-mono text-[#00ff41]/50 text-xs bg-[#0d0618]">
-          <p>© 2024 GO MODS — All systems operational</p>
+          <p>© 2024 PHILLMODS — All systems operational</p>
           <p className="mt-2">
             <a href="mailto:mcrevatis03@gmail.com" className="hover:text-[#00ff41] transition-colors">
               mcrevatis03@gmail.com
