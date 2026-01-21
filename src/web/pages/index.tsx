@@ -1121,20 +1121,56 @@ function LinkedInIcon() {
 
 // Contact Section - Open Network
 function ContactSection() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
-  const [submitted, setSubmitted] = useState(false);
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Open mailto with pre-filled content
-    window.location.href = `mailto:mcrevatis03@gmail.com?subject=Commission Inquiry&body=${encodeURIComponent(message)}%0A%0AFrom: ${encodeURIComponent(email)}`;
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 3000);
+    setStatus('loading');
+    setErrorMessage("");
+
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          access_key: "cfc8e4c9-68f2-41af-b2be-b4a50df8f3a5",
+          name: name,
+          email: email,
+          message: message,
+          subject: `New Commission Inquiry from ${name}`,
+          from_name: "PhilMods Portfolio",
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setStatus('success');
+        setName("");
+        setEmail("");
+        setMessage("");
+        setTimeout(() => setStatus('idle'), 5000);
+      } else {
+        setStatus('error');
+        setErrorMessage(result.message || "Something went wrong. Please try again.");
+        setTimeout(() => setStatus('idle'), 5000);
+      }
+    } catch {
+      setStatus('error');
+      setErrorMessage("Network error. Please try again later.");
+      setTimeout(() => setStatus('idle'), 5000);
+    }
   };
 
   return (
-    <section className="min-h-screen relative py-20 px-4 overflow-hidden">
+    <section id="contact-form" className="min-h-screen relative py-20 px-4 overflow-hidden">
       {/* Grid floor effect */}
       <div className="absolute inset-0 pointer-events-none">
         <div 
@@ -1238,15 +1274,30 @@ function ContactSection() {
             
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
+                <label className="block font-mono text-[#ff41b4]/60 text-xs mb-2">&gt; YOUR_NAME</label>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                  disabled={status === 'loading'}
+                  className="w-full px-4 py-2 bg-[#1a0b2e] border border-[#ff41b4]/30 rounded font-mono text-white
+                             focus:border-[#ff41b4] focus:outline-none focus:ring-1 focus:ring-[#ff41b4]/50
+                             placeholder:text-white/30 disabled:opacity-50"
+                  placeholder="Enter your name"
+                />
+              </div>
+              <div>
                 <label className="block font-mono text-[#ff41b4]/60 text-xs mb-2">&gt; YOUR_EMAIL</label>
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
+                  disabled={status === 'loading'}
                   className="w-full px-4 py-2 bg-[#1a0b2e] border border-[#ff41b4]/30 rounded font-mono text-white
                              focus:border-[#ff41b4] focus:outline-none focus:ring-1 focus:ring-[#ff41b4]/50
-                             placeholder:text-white/30"
+                             placeholder:text-white/30 disabled:opacity-50"
                   placeholder="user@domain.com"
                 />
               </div>
@@ -1257,20 +1308,46 @@ function ContactSection() {
                   onChange={(e) => setMessage(e.target.value)}
                   required
                   rows={4}
+                  disabled={status === 'loading'}
                   className="w-full px-4 py-2 bg-[#1a0b2e] border border-[#ff41b4]/30 rounded font-mono text-white
                              focus:border-[#ff41b4] focus:outline-none focus:ring-1 focus:ring-[#ff41b4]/50
-                             placeholder:text-white/30 resize-none"
+                             placeholder:text-white/30 resize-none disabled:opacity-50"
                   placeholder="Describe your project..."
                 />
               </div>
+              
+              {/* Error message */}
+              {status === 'error' && (
+                <div className="p-3 bg-red-500/10 border border-red-500/30 rounded font-mono text-red-400 text-sm animate-[fadeIn_0.3s]">
+                  ⚠ {errorMessage}
+                </div>
+              )}
+              
+              {/* Success message */}
+              {status === 'success' && (
+                <div className="p-3 bg-[#ff41b4]/10 border border-[#ff41b4]/30 rounded font-mono text-[#ff41b4] text-sm animate-[fadeIn_0.3s]">
+                  ✓ Message sent! I'll get back to you within 24-48 hours.
+                </div>
+              )}
+              
               <button
                 type="submit"
-                className={`w-full py-3 font-mono text-sm border-2 rounded transition-all
-                           ${submitted 
-                             ? 'bg-[#ff41b4] text-[#1a0b2e] border-[#ff41b4]' 
+                disabled={status === 'loading'}
+                className={`w-full py-3 font-mono text-sm border-2 rounded transition-all relative overflow-hidden
+                           ${status === 'success' 
+                             ? 'bg-[#ff41b4] text-[#1a0b2e] border-[#ff41b4] shadow-[0_0_20px_rgba(255,65,180,0.5)]' 
+                             : status === 'loading'
+                             ? 'border-[#ff41b4]/50 text-[#ff41b4]/50 cursor-not-allowed'
                              : 'border-[#ff41b4] text-[#ff41b4] hover:bg-[#ff41b4] hover:text-[#1a0b2e]'}`}
               >
-                {submitted ? '[ MESSAGE SENT ]' : '[ TRANSMIT MESSAGE ]'}
+                {status === 'loading' && (
+                  <span className="absolute inset-0 flex items-center justify-center">
+                    <span className="w-5 h-5 border-2 border-[#ff41b4]/30 border-t-[#ff41b4] rounded-full animate-spin" />
+                  </span>
+                )}
+                <span className={status === 'loading' ? 'opacity-0' : ''}>
+                  {status === 'success' ? '[ MESSAGE SENT! ]' : '[ TRANSMIT MESSAGE ]'}
+                </span>
               </button>
             </form>
           </div>
@@ -1428,15 +1505,17 @@ function ServicesSection() {
           <p className="font-mono text-white/60 text-lg mb-8 max-w-lg mx-auto">
             Ready to bring your vision to life? Let's create something extraordinary.
           </p>
-          <a
-            href="mailto:mcrevatis03@gmail.com"
+          <button
+            onClick={() => {
+              document.getElementById('contact-form')?.scrollIntoView({ behavior: 'smooth' });
+            }}
             className="inline-block px-10 py-4 font-mono text-lg text-[#1a0b2e] bg-[#ff41b4] 
                        border-2 border-[#ff41b4] hover:bg-transparent hover:text-[#ff41b4] 
                        transition-all duration-300 shadow-[0_0_30px_rgba(255,65,180,0.4)]
-                       hover:shadow-[0_0_50px_rgba(255,65,180,0.6)]"
+                       hover:shadow-[0_0_50px_rgba(255,65,180,0.6)] cursor-pointer"
           >
             [ START YOUR PROJECT ]
-          </a>
+          </button>
         </div>
       </div>
     </section>
