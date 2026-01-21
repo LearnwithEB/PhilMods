@@ -6,7 +6,7 @@ import * as THREE from "three";
 
 // Color palette
 const VOID_PURPLE = "#1a0b2e";
-const TERMINAL_GREEN = "#00ff41";
+const TERMINAL_GREEN = "#ff41b4";
 const ACCENT_PINK = "#ff41b4";
 
 // Boot sequence lines
@@ -102,17 +102,17 @@ function LoadingScreen({ onStart }: { onStart: () => void }) {
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#1a0b2e] cursor-crosshair-green">
       <div className="text-left max-w-2xl w-full px-8">
-        <div className="border border-[#00ff41]/30 bg-[#0d0618]/80 p-6 rounded-lg">
-          <div className="flex items-center gap-2 mb-4 pb-3 border-b border-[#00ff41]/20">
+        <div className="border border-[#ff41b4]/30 bg-[#0d0618]/80 p-6 rounded-lg">
+          <div className="flex items-center gap-2 mb-4 pb-3 border-b border-[#ff41b4]/20">
             <div className="w-2.5 h-2.5 rounded-full bg-red-500" />
             <div className="w-2.5 h-2.5 rounded-full bg-yellow-500" />
-            <div className="w-2.5 h-2.5 rounded-full bg-[#00ff41]" />
-            <span className="ml-3 font-mono text-[#00ff41]/60 text-xs">boot_sequence.exe</span>
+            <div className="w-2.5 h-2.5 rounded-full bg-[#ff41b4]" />
+            <span className="ml-3 font-mono text-[#ff41b4]/60 text-xs">boot_sequence.exe</span>
           </div>
-          <div className="font-mono text-[#00ff41] text-sm md:text-base space-y-2 min-h-[180px]">
+          <div className="font-mono text-[#ff41b4] text-sm md:text-base space-y-2 min-h-[180px]">
             {displayedText.map((line, i) => (
               <div key={i} className="flex items-center gap-2">
-                <span className="text-[#00ff41]/50">&gt;</span>
+                <span className="text-[#ff41b4]/50">&gt;</span>
                 <span className={i === displayedText.length - 1 && currentLine < BOOT_SEQUENCE.length ? '' : 'opacity-70'}>
                   {line}
                 </span>
@@ -128,7 +128,7 @@ function LoadingScreen({ onStart }: { onStart: () => void }) {
           {[...Array(5)].map((_, i) => (
             <div
               key={i}
-              className="w-2 h-2 bg-[#00ff41] rounded-full"
+              className="w-2 h-2 bg-[#ff41b4] rounded-full"
               style={{ 
                 opacity: i <= currentLine ? 1 : 0.2,
                 transition: 'opacity 0.3s'
@@ -141,10 +141,10 @@ function LoadingScreen({ onStart }: { onStart: () => void }) {
           <div className="flex justify-center">
             <button
               onClick={onStart}
-              className="relative px-10 py-4 font-mono text-lg text-[#1a0b2e] bg-[#00ff41] border-2 border-[#00ff41] 
-                         hover:bg-transparent hover:text-[#00ff41] transition-all duration-300
-                         animate-[fadeIn_0.5s_ease-out] shadow-[0_0_30px_rgba(0,255,65,0.5)]
-                         hover:shadow-[0_0_50px_rgba(0,255,65,0.8)] cursor-pointer"
+              className="relative px-10 py-4 font-mono text-lg text-[#1a0b2e] bg-[#ff41b4] border-2 border-[#ff41b4] 
+                         hover:bg-transparent hover:text-[#ff41b4] transition-all duration-300
+                         animate-[fadeIn_0.5s_ease-out] shadow-[0_0_30px_rgba(255,65,180,0.5)]
+                         hover:shadow-[0_0_50px_rgba(255,65,180,0.8)] cursor-pointer"
             >
               [ START SYSTEM ]
             </button>
@@ -171,15 +171,15 @@ function StatusBeacon() {
       onMouseEnter={() => setExpanded(true)}
       onMouseLeave={() => setExpanded(false)}
     >
-      <div className={`flex items-center gap-3 bg-[#0d0618]/90 backdrop-blur-sm border border-[#00ff41]/30 
-                       px-4 py-2 font-mono text-xs text-[#00ff41] transition-all duration-500
+      <div className={`flex items-center gap-3 bg-[#0d0618]/90 backdrop-blur-sm border border-[#ff41b4]/30 
+                       px-4 py-2 font-mono text-xs text-[#ff41b4] transition-all duration-500
                        ${expanded ? 'pr-6' : ''}`}>
         <div className="relative">
-          <div className="w-2 h-2 bg-[#00ff41] rounded-full" />
-          <div className="absolute inset-0 w-2 h-2 bg-[#00ff41] rounded-full animate-ping" />
+          <div className="w-2 h-2 bg-[#ff41b4] rounded-full" />
+          <div className="absolute inset-0 w-2 h-2 bg-[#ff41b4] rounded-full animate-ping" />
         </div>
         <span>STATUS: ONLINE</span>
-        <span className="text-[#00ff41]/60">|</span>
+        <span className="text-[#ff41b4]/60">|</span>
         <span>OPEN TO COMMISSION</span>
         {expanded && (
           <a 
@@ -209,15 +209,15 @@ function ProjectModal({ project, onClose, wireframeMode, onToggleWireframe }: {
       onClick={onClose}
     >
       <div 
-        className="relative w-full max-w-4xl bg-[#0d0618]/95 border border-[#00ff41]/40 rounded-xl overflow-hidden"
+        className="relative w-full max-w-4xl bg-[#0d0618]/95 border border-[#ff41b4]/40 rounded-xl overflow-hidden"
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-[#00ff41]/20">
-          <h3 className="font-mono text-[#00ff41] text-xl">{project.title}</h3>
+        <div className="flex items-center justify-between p-4 border-b border-[#ff41b4]/20">
+          <h3 className="font-mono text-[#ff41b4] text-xl">{project.title}</h3>
           <button
             onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center text-[#00ff41] hover:bg-[#00ff41]/20 rounded transition-colors"
+            className="w-8 h-8 flex items-center justify-center text-[#ff41b4] hover:bg-[#ff41b4]/20 rounded transition-colors"
           >
             ✕
           </button>
@@ -226,7 +226,7 @@ function ProjectModal({ project, onClose, wireframeMode, onToggleWireframe }: {
         {/* Content */}
         <div className="grid md:grid-cols-2 gap-6 p-6">
           {/* 3D Viewer Area */}
-          <div className="aspect-square bg-[#1a0b2e] rounded-lg border border-[#00ff41]/20 relative overflow-hidden">
+          <div className="aspect-square bg-[#1a0b2e] rounded-lg border border-[#ff41b4]/20 relative overflow-hidden">
             <Canvas camera={{ position: [0, 0, 3], fov: 50 }}>
               <ambientLight intensity={0.5} />
               <pointLight position={[5, 5, 5]} intensity={1} color={TERMINAL_GREEN} />
@@ -246,8 +246,8 @@ function ProjectModal({ project, onClose, wireframeMode, onToggleWireframe }: {
             {/* Wireframe Toggle */}
             <button
               onClick={onToggleWireframe}
-              className="absolute bottom-4 right-4 px-4 py-2 font-mono text-xs text-[#00ff41] border border-[#00ff41]/50 
-                         bg-[#0d0618]/80 hover:bg-[#00ff41]/20 rounded transition-all"
+              className="absolute bottom-4 right-4 px-4 py-2 font-mono text-xs text-[#ff41b4] border border-[#ff41b4]/50 
+                         bg-[#0d0618]/80 hover:bg-[#ff41b4]/20 rounded transition-all"
             >
               {wireframeMode ? '[ SOLID VIEW ]' : '[ WIREFRAME ]'}
             </button>
@@ -260,22 +260,22 @@ function ProjectModal({ project, onClose, wireframeMode, onToggleWireframe }: {
             </p>
             
             <div className="space-y-3">
-              <div className="font-mono text-xs text-[#00ff41]/60 uppercase tracking-wider">Tech Specs</div>
-              <div className="text-[#00ff41] font-mono text-sm">{project.techSpecs}</div>
+              <div className="font-mono text-xs text-[#ff41b4]/60 uppercase tracking-wider">Tech Specs</div>
+              <div className="text-[#ff41b4] font-mono text-sm">{project.techSpecs}</div>
             </div>
             
             <div className="grid grid-cols-3 gap-4">
-              <div className="bg-[#1a0b2e] border border-[#00ff41]/20 rounded-lg p-3">
-                <div className="font-mono text-[#00ff41]/50 text-xs mb-1">Polycount</div>
-                <div className="font-mono text-[#00ff41] text-sm">{project.polycount}</div>
+              <div className="bg-[#1a0b2e] border border-[#ff41b4]/20 rounded-lg p-3">
+                <div className="font-mono text-[#ff41b4]/50 text-xs mb-1">Polycount</div>
+                <div className="font-mono text-[#ff41b4] text-sm">{project.polycount}</div>
               </div>
-              <div className="bg-[#1a0b2e] border border-[#00ff41]/20 rounded-lg p-3">
-                <div className="font-mono text-[#00ff41]/50 text-xs mb-1">Textures</div>
-                <div className="font-mono text-[#00ff41] text-sm">{project.textures}</div>
+              <div className="bg-[#1a0b2e] border border-[#ff41b4]/20 rounded-lg p-3">
+                <div className="font-mono text-[#ff41b4]/50 text-xs mb-1">Textures</div>
+                <div className="font-mono text-[#ff41b4] text-sm">{project.textures}</div>
               </div>
-              <div className="bg-[#1a0b2e] border border-[#00ff41]/20 rounded-lg p-3">
-                <div className="font-mono text-[#00ff41]/50 text-xs mb-1">Rigged</div>
-                <div className="font-mono text-[#00ff41] text-sm">{project.rigged}</div>
+              <div className="bg-[#1a0b2e] border border-[#ff41b4]/20 rounded-lg p-3">
+                <div className="font-mono text-[#ff41b4]/50 text-xs mb-1">Rigged</div>
+                <div className="font-mono text-[#ff41b4] text-sm">{project.rigged}</div>
               </div>
             </div>
           </div>
@@ -308,8 +308,8 @@ function ProjectCapsule({ project, delay, onSelect }: {
       <div className={`relative p-6 rounded-xl border transition-all duration-500
                        bg-[#0d0618]/40 backdrop-blur-md
                        ${isHovered 
-                         ? 'border-[#00ff41]/80 shadow-[0_0_40px_rgba(0,255,65,0.4)]' 
-                         : 'border-[#00ff41]/30 shadow-[0_0_20px_rgba(0,255,65,0.1)]'}`}>
+                         ? 'border-[#ff41b4]/80 shadow-[0_0_40px_rgba(255,65,180,0.4)]' 
+                         : 'border-[#ff41b4]/30 shadow-[0_0_20px_rgba(255,65,180,0.1)]'}`}>
         
         {/* Mini 3D preview */}
         <div className="w-full aspect-video bg-[#1a0b2e] rounded-lg mb-4 overflow-hidden relative">
@@ -326,13 +326,13 @@ function ProjectCapsule({ project, delay, onSelect }: {
           
           {/* Scan line effect */}
           <div className="absolute inset-0 pointer-events-none opacity-20">
-            <div className="w-full h-px bg-[#00ff41] animate-scanline" />
+            <div className="w-full h-px bg-[#ff41b4] animate-scanline" />
           </div>
         </div>
         
         {/* Title */}
         <h3 className={`font-mono text-lg mb-2 transition-colors duration-300
-                        ${isHovered ? 'text-[#00ff41]' : 'text-[#00ff41]/80'}`}>
+                        ${isHovered ? 'text-[#ff41b4]' : 'text-[#ff41b4]/80'}`}>
           {project.title}
         </h3>
         
@@ -342,7 +342,7 @@ function ProjectCapsule({ project, delay, onSelect }: {
         </p>
         
         {/* Hover indicator */}
-        <div className={`absolute bottom-2 right-2 font-mono text-[10px] text-[#00ff41]/60 
+        <div className={`absolute bottom-2 right-2 font-mono text-[10px] text-[#ff41b4]/60 
                          transition-opacity duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
           [ CLICK TO EXPAND ]
         </div>
@@ -355,7 +355,7 @@ function ProjectCapsule({ project, delay, onSelect }: {
 function FloatingBadge({ text, delay }: { text: string; delay: number }) {
   return (
     <div
-      className="inline-block px-4 py-2 font-mono text-xs text-[#00ff41] border border-[#00ff41]/30 
+      className="inline-block px-4 py-2 font-mono text-xs text-[#ff41b4] border border-[#ff41b4]/30 
                  rounded-full bg-[#0d0618]/60 backdrop-blur-sm whitespace-nowrap
                  animate-driftBadge"
       style={{ animationDelay: `${delay}s` }}
@@ -560,7 +560,7 @@ function TerminalConsole({ nostalgiaMode, onToggle }: { nostalgiaMode: boolean; 
     return () => clearInterval(interval);
   }, []);
 
-  const terminalColor = nostalgiaMode ? "#ff41b4" : "#00ff41";
+  const terminalColor = nostalgiaMode ? "#41f4ff" : "#ff41b4";
 
   return (
     <div className="w-full max-w-3xl mx-auto">
@@ -613,13 +613,13 @@ function ProcessViewer() {
   const [stage, setStage] = useState(0);
   
   return (
-    <div className="w-full max-w-2xl mx-auto p-6 border border-[#00ff41]/30 rounded-xl bg-[#0d0618]/60">
-      <h3 className="font-mono text-[#00ff41] text-lg mb-6 text-center">[ PROCESS VIEWER ]</h3>
+    <div className="w-full max-w-2xl mx-auto p-6 border border-[#ff41b4]/30 rounded-xl bg-[#0d0618]/60">
+      <h3 className="font-mono text-[#ff41b4] text-lg mb-6 text-center">[ PROCESS VIEWER ]</h3>
       
       {/* Stage display */}
       <div className="flex items-center justify-center gap-4 mb-8">
         <span className="text-4xl">{PROCESS_STAGES[stage].icon}</span>
-        <span className="font-mono text-[#00ff41] text-xl">{PROCESS_STAGES[stage].name}</span>
+        <span className="font-mono text-[#ff41b4] text-xl">{PROCESS_STAGES[stage].name}</span>
       </div>
       
       {/* Timeline slider */}
@@ -630,10 +630,10 @@ function ProcessViewer() {
           max="4"
           value={stage}
           onChange={(e) => setStage(parseInt(e.target.value))}
-          className="w-full h-2 bg-[#1a0b2e] rounded-lg appearance-none cursor-pointer accent-[#00ff41]
+          className="w-full h-2 bg-[#1a0b2e] rounded-lg appearance-none cursor-pointer accent-[#ff41b4]
                      [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5
-                     [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#00ff41]
-                     [&::-webkit-slider-thumb]:shadow-[0_0_15px_rgba(0,255,65,0.6)]"
+                     [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#ff41b4]
+                     [&::-webkit-slider-thumb]:shadow-[0_0_15px_rgba(255,65,180,0.6)]"
         />
         {/* Stage markers */}
         <div className="flex justify-between mt-2">
@@ -641,7 +641,7 @@ function ProcessViewer() {
             <button
               key={i}
               onClick={() => setStage(i)}
-              className={`text-xs font-mono transition-all ${i === stage ? 'text-[#00ff41]' : 'text-white/30 hover:text-white/60'}`}
+              className={`text-xs font-mono transition-all ${i === stage ? 'text-[#ff41b4]' : 'text-white/30 hover:text-white/60'}`}
             >
               {i + 1}
             </button>
@@ -652,7 +652,7 @@ function ProcessViewer() {
       {/* Progress bar */}
       <div className="mt-6 h-1 bg-[#1a0b2e] rounded-full overflow-hidden">
         <div 
-          className="h-full bg-[#00ff41] transition-all duration-300"
+          className="h-full bg-[#ff41b4] transition-all duration-300"
           style={{ width: `${(stage / 4) * 100}%` }}
         />
       </div>
@@ -695,16 +695,16 @@ function StatsDashboard() {
   
   return (
     <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto">
-      <div className="p-4 border border-[#00ff41]/30 rounded-lg bg-[#0d0618]/60 text-center">
-        <div className="font-mono text-3xl text-[#00ff41] mb-1">{projectsCount}</div>
+      <div className="p-4 border border-[#ff41b4]/30 rounded-lg bg-[#0d0618]/60 text-center">
+        <div className="font-mono text-3xl text-[#ff41b4] mb-1">{projectsCount}</div>
         <div className="font-mono text-xs text-white/50">Projects Completed</div>
       </div>
-      <div className="p-4 border border-[#00ff41]/30 rounded-lg bg-[#0d0618]/60 text-center">
-        <div className="font-mono text-3xl text-[#00ff41] mb-1">{verticesCount}M</div>
+      <div className="p-4 border border-[#ff41b4]/30 rounded-lg bg-[#0d0618]/60 text-center">
+        <div className="font-mono text-3xl text-[#ff41b4] mb-1">{verticesCount}M</div>
         <div className="font-mono text-xs text-white/50">Total Vertices</div>
       </div>
-      <div className="p-4 border border-[#00ff41]/30 rounded-lg bg-[#0d0618]/60 text-center">
-        <div className="font-mono text-3xl text-[#00ff41] mb-1">∞</div>
+      <div className="p-4 border border-[#ff41b4]/30 rounded-lg bg-[#0d0618]/60 text-center">
+        <div className="font-mono text-3xl text-[#ff41b4] mb-1">∞</div>
         <div className="font-mono text-xs text-white/50">Coffee Consumed</div>
       </div>
     </div>
@@ -734,7 +734,7 @@ function MatrixRain({ active }: { active: boolean }) {
       ctx.fillStyle = 'rgba(13, 6, 24, 0.05)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       
-      ctx.fillStyle = '#00ff41';
+      ctx.fillStyle = '#ff41b4';
       ctx.font = `${fontSize}px monospace`;
       
       for (let i = 0; i < drops.length; i++) {
@@ -758,8 +758,8 @@ function MatrixRain({ active }: { active: boolean }) {
     <div className="fixed inset-0 z-50 pointer-events-none">
       <canvas ref={canvasRef} className="w-full h-full" />
       <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
-        <div className="font-mono text-[#00ff41] text-4xl mb-4 animate-pulse">MATRIX MODE</div>
-        <div className="font-mono text-[#00ff41]/60 text-sm">Press ESC to exit</div>
+        <div className="font-mono text-[#ff41b4] text-4xl mb-4 animate-pulse">MATRIX MODE</div>
+        <div className="font-mono text-[#ff41b4]/60 text-sm">Press ESC to exit</div>
       </div>
     </div>
   );
@@ -792,9 +792,9 @@ function CommissionButton() {
     <a
       href="mailto:mcrevatis03@gmail.com"
       className="relative inline-block mt-10 px-8 py-4 font-mono text-base md:text-lg 
-                 text-[#00ff41] bg-transparent border-2 border-[#00ff41] 
-                 hover:bg-[#00ff41] hover:text-[#1a0b2e] transition-all duration-300
-                 shadow-[0_0_20px_rgba(0,255,65,0.4)] hover:shadow-[0_0_40px_rgba(0,255,65,0.7)]
+                 text-[#ff41b4] bg-transparent border-2 border-[#ff41b4] 
+                 hover:bg-[#ff41b4] hover:text-[#1a0b2e] transition-all duration-300
+                 shadow-[0_0_20px_rgba(255,65,180,0.4)] hover:shadow-[0_0_40px_rgba(255,65,180,0.7)]
                  pointer-events-auto cursor-pointer commission-pulse"
     >
       [ COMMISSION TODAY ]
@@ -807,26 +807,26 @@ function WireframeCharacterDisplay() {
   return (
     <div className="relative w-full max-w-lg mx-auto mb-8">
       {/* Glow effect behind image */}
-      <div className="absolute inset-0 blur-3xl opacity-40 bg-gradient-radial from-[#00ff41] to-transparent scale-110" />
+      <div className="absolute inset-0 blur-3xl opacity-40 bg-gradient-radial from-[#ff41b4] to-transparent scale-110" />
       
       {/* Main image container */}
       <div className="relative wireframe-float">
         {/* Holographic border */}
-        <div className="absolute -inset-1 bg-gradient-to-r from-[#00ff41]/30 via-[#ff41b4]/30 to-[#00ff41]/30 rounded-xl blur-sm" />
+        <div className="absolute -inset-1 bg-gradient-to-r from-[#ff41b4]/30 via-[#ff41b4]/30 to-[#ff41b4]/30 rounded-xl blur-sm" />
         
         {/* Image */}
         <img 
           src="./wireframe-character.png" 
           alt="3D Wireframe Character"
-          className="relative w-full h-auto rounded-lg shadow-[0_0_60px_rgba(0,255,65,0.3)]"
+          className="relative w-full h-auto rounded-lg shadow-[0_0_60px_rgba(255,65,180,0.3)]"
           style={{
-            filter: 'drop-shadow(0 0 30px rgba(0,255,65,0.4))'
+            filter: 'drop-shadow(0 0 30px rgba(255,65,180,0.4))'
           }}
         />
         
         {/* Scan line overlay */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-lg opacity-30">
-          <div className="absolute w-full h-1 bg-gradient-to-b from-transparent via-[#00ff41] to-transparent animate-scanline" />
+          <div className="absolute w-full h-1 bg-gradient-to-b from-transparent via-[#ff41b4] to-transparent animate-scanline" />
         </div>
         
         {/* Holographic grid overlay */}
@@ -834,8 +834,8 @@ function WireframeCharacterDisplay() {
           className="absolute inset-0 pointer-events-none rounded-lg opacity-10"
           style={{
             backgroundImage: `
-              linear-gradient(0deg, #00ff41 1px, transparent 1px),
-              linear-gradient(90deg, #00ff41 1px, transparent 1px)
+              linear-gradient(0deg, #ff41b4 1px, transparent 1px),
+              linear-gradient(90deg, #ff41b4 1px, transparent 1px)
             `,
             backgroundSize: '20px 20px'
           }}
@@ -843,8 +843,8 @@ function WireframeCharacterDisplay() {
       </div>
       
       {/* Tech label */}
-      <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-[#0d0618]/90 border border-[#00ff41]/40 rounded-full">
-        <span className="font-mono text-xs text-[#00ff41]/80">[ WIREFRAME VIEW ]</span>
+      <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-[#0d0618]/90 border border-[#ff41b4]/40 rounded-full">
+        <span className="font-mono text-xs text-[#ff41b4]/80">[ WIREFRAME VIEW ]</span>
       </div>
     </div>
   );
@@ -900,8 +900,8 @@ function ContactSection() {
           style={{
             background: `
               linear-gradient(to top, #0d0618 0%, transparent 100%),
-              linear-gradient(90deg, #00ff41 1px, transparent 1px),
-              linear-gradient(0deg, #00ff41 1px, transparent 1px)
+              linear-gradient(90deg, #ff41b4 1px, transparent 1px),
+              linear-gradient(0deg, #ff41b4 1px, transparent 1px)
             `,
             backgroundSize: '100% 100%, 40px 40px, 40px 40px',
             transform: 'perspective(500px) rotateX(60deg)',
@@ -912,7 +912,7 @@ function ContactSection() {
 
       <div className="relative z-10 max-w-4xl mx-auto">
         {/* Section Header */}
-        <h2 className="text-center font-mono text-[#00ff41] text-2xl md:text-3xl mb-4">
+        <h2 className="text-center font-mono text-[#ff41b4] text-2xl md:text-3xl mb-4">
           [ OPEN NETWORK ]
         </h2>
         <p className="text-center font-mono text-white/40 text-sm mb-12">
@@ -921,22 +921,22 @@ function ContactSection() {
 
         {/* Central Holographic Display */}
         <div className="mx-auto mb-12 max-w-md">
-          <div className="relative p-6 border border-[#00ff41]/40 rounded-xl bg-[#0d0618]/80 backdrop-blur-md
-                          shadow-[0_0_40px_rgba(0,255,65,0.2)]">
+          <div className="relative p-6 border border-[#ff41b4]/40 rounded-xl bg-[#0d0618]/80 backdrop-blur-md
+                          shadow-[0_0_40px_rgba(255,65,180,0.2)]">
             {/* Status display */}
             <div className="flex items-center justify-center gap-4 mb-6">
               <div className="relative">
-                <div className="w-3 h-3 bg-[#00ff41] rounded-full" />
-                <div className="absolute inset-0 w-3 h-3 bg-[#00ff41] rounded-full animate-ping" />
+                <div className="w-3 h-3 bg-[#ff41b4] rounded-full" />
+                <div className="absolute inset-0 w-3 h-3 bg-[#ff41b4] rounded-full animate-ping" />
               </div>
-              <span className="font-mono text-[#00ff41] text-lg tracking-wider">
+              <span className="font-mono text-[#ff41b4] text-lg tracking-wider">
                 STATUS: ONLINE | OPEN TO COMMISSION
               </span>
             </div>
             
             {/* Response time */}
-            <div className="text-center font-mono text-white/50 text-sm border-t border-[#00ff41]/20 pt-4">
-              Response Time: <span className="text-[#00ff41]">24-48 HR TURNAROUND</span>
+            <div className="text-center font-mono text-white/50 text-sm border-t border-[#ff41b4]/20 pt-4">
+              Response Time: <span className="text-[#ff41b4]">24-48 HR TURNAROUND</span>
             </div>
           </div>
         </div>
@@ -950,15 +950,15 @@ function ContactSection() {
               href="https://discord.com/users/pheliabobelia"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-4 p-4 border border-[#00ff41]/30 rounded-lg bg-[#0d0618]/60
-                         hover:border-[#00ff41]/60 hover:bg-[#00ff41]/5 transition-all group"
+              className="flex items-center gap-4 p-4 border border-[#ff41b4]/30 rounded-lg bg-[#0d0618]/60
+                         hover:border-[#ff41b4]/60 hover:bg-[#ff41b4]/5 transition-all group"
             >
               <div className="w-12 h-12 flex items-center justify-center rounded-lg bg-[#5865F2] text-white">
                 <DiscordIcon />
               </div>
               <div>
-                <div className="font-mono text-[#00ff41] text-sm">Discord</div>
-                <div className="font-mono text-white/70 group-hover:text-[#00ff41] transition-colors">
+                <div className="font-mono text-[#ff41b4] text-sm">Discord</div>
+                <div className="font-mono text-white/70 group-hover:text-[#ff41b4] transition-colors">
                   @pheliabobelia
                 </div>
               </div>
@@ -967,18 +967,18 @@ function ContactSection() {
             {/* Email direct */}
             <a 
               href="mailto:mcrevatis03@gmail.com"
-              className="flex items-center gap-4 p-4 border border-[#00ff41]/30 rounded-lg bg-[#0d0618]/60
-                         hover:border-[#00ff41]/60 hover:bg-[#00ff41]/5 transition-all group"
+              className="flex items-center gap-4 p-4 border border-[#ff41b4]/30 rounded-lg bg-[#0d0618]/60
+                         hover:border-[#ff41b4]/60 hover:bg-[#ff41b4]/5 transition-all group"
             >
-              <div className="w-12 h-12 flex items-center justify-center rounded-lg bg-[#00ff41]/20 text-[#00ff41]">
+              <div className="w-12 h-12 flex items-center justify-center rounded-lg bg-[#ff41b4]/20 text-[#ff41b4]">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
                         d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
               </div>
               <div>
-                <div className="font-mono text-[#00ff41] text-sm">Email</div>
-                <div className="font-mono text-white/70 group-hover:text-[#00ff41] transition-colors">
+                <div className="font-mono text-[#ff41b4] text-sm">Email</div>
+                <div className="font-mono text-white/70 group-hover:text-[#ff41b4] transition-colors">
                   mcrevatis03@gmail.com
                 </div>
               </div>
@@ -986,37 +986,37 @@ function ContactSection() {
           </div>
 
           {/* Email Form */}
-          <div className="border border-[#00ff41]/30 rounded-lg bg-[#0d0618]/60 p-6">
-            <div className="flex items-center gap-2 mb-4 pb-3 border-b border-[#00ff41]/20">
+          <div className="border border-[#ff41b4]/30 rounded-lg bg-[#0d0618]/60 p-6">
+            <div className="flex items-center gap-2 mb-4 pb-3 border-b border-[#ff41b4]/20">
               <div className="w-2 h-2 rounded-full bg-red-500" />
               <div className="w-2 h-2 rounded-full bg-yellow-500" />
-              <div className="w-2 h-2 rounded-full bg-[#00ff41]" />
-              <span className="ml-2 font-mono text-[#00ff41]/60 text-xs">send_message.exe</span>
+              <div className="w-2 h-2 rounded-full bg-[#ff41b4]" />
+              <span className="ml-2 font-mono text-[#ff41b4]/60 text-xs">send_message.exe</span>
             </div>
             
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block font-mono text-[#00ff41]/60 text-xs mb-2">&gt; YOUR_EMAIL</label>
+                <label className="block font-mono text-[#ff41b4]/60 text-xs mb-2">&gt; YOUR_EMAIL</label>
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="w-full px-4 py-2 bg-[#1a0b2e] border border-[#00ff41]/30 rounded font-mono text-white
-                             focus:border-[#00ff41] focus:outline-none focus:ring-1 focus:ring-[#00ff41]/50
+                  className="w-full px-4 py-2 bg-[#1a0b2e] border border-[#ff41b4]/30 rounded font-mono text-white
+                             focus:border-[#ff41b4] focus:outline-none focus:ring-1 focus:ring-[#ff41b4]/50
                              placeholder:text-white/30"
                   placeholder="user@domain.com"
                 />
               </div>
               <div>
-                <label className="block font-mono text-[#00ff41]/60 text-xs mb-2">&gt; MESSAGE</label>
+                <label className="block font-mono text-[#ff41b4]/60 text-xs mb-2">&gt; MESSAGE</label>
                 <textarea
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   required
                   rows={4}
-                  className="w-full px-4 py-2 bg-[#1a0b2e] border border-[#00ff41]/30 rounded font-mono text-white
-                             focus:border-[#00ff41] focus:outline-none focus:ring-1 focus:ring-[#00ff41]/50
+                  className="w-full px-4 py-2 bg-[#1a0b2e] border border-[#ff41b4]/30 rounded font-mono text-white
+                             focus:border-[#ff41b4] focus:outline-none focus:ring-1 focus:ring-[#ff41b4]/50
                              placeholder:text-white/30 resize-none"
                   placeholder="Describe your project..."
                 />
@@ -1025,8 +1025,8 @@ function ContactSection() {
                 type="submit"
                 className={`w-full py-3 font-mono text-sm border-2 rounded transition-all
                            ${submitted 
-                             ? 'bg-[#00ff41] text-[#1a0b2e] border-[#00ff41]' 
-                             : 'border-[#00ff41] text-[#00ff41] hover:bg-[#00ff41] hover:text-[#1a0b2e]'}`}
+                             ? 'bg-[#ff41b4] text-[#1a0b2e] border-[#ff41b4]' 
+                             : 'border-[#ff41b4] text-[#ff41b4] hover:bg-[#ff41b4] hover:text-[#1a0b2e]'}`}
               >
                 {submitted ? '[ MESSAGE SENT ]' : '[ TRANSMIT MESSAGE ]'}
               </button>
@@ -1041,11 +1041,11 @@ function ContactSection() {
 // Footer Component
 function Footer() {
   return (
-    <footer className="py-12 px-4 bg-[#0d0618] border-t border-[#00ff41]/10">
+    <footer className="py-12 px-4 bg-[#0d0618] border-t border-[#ff41b4]/10">
       <div className="max-w-4xl mx-auto">
         {/* Main footer content */}
         <div className="text-center mb-8">
-          <p className="font-mono text-[#00ff41] text-lg mb-2">PHILMODS</p>
+          <p className="font-mono text-[#ff41b4] text-lg mb-2">PHILMODS</p>
           <p className="font-mono text-white/50 text-sm">
             © 2025 | Bringing Ideas to Life Through Innovation
           </p>
@@ -1057,8 +1057,8 @@ function Footer() {
             href="https://discord.com/users/pheliabobelia"
             target="_blank"
             rel="noopener noreferrer"
-            className="w-10 h-10 flex items-center justify-center rounded-lg border border-[#00ff41]/30 
-                       text-[#00ff41] hover:bg-[#00ff41]/10 hover:border-[#00ff41]/60 transition-all"
+            className="w-10 h-10 flex items-center justify-center rounded-lg border border-[#ff41b4]/30 
+                       text-[#ff41b4] hover:bg-[#ff41b4]/10 hover:border-[#ff41b4]/60 transition-all"
           >
             <DiscordIcon />
           </a>
@@ -1066,8 +1066,8 @@ function Footer() {
             href="https://artstation.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="w-10 h-10 flex items-center justify-center rounded-lg border border-[#00ff41]/30 
-                       text-[#00ff41] hover:bg-[#00ff41]/10 hover:border-[#00ff41]/60 transition-all"
+            className="w-10 h-10 flex items-center justify-center rounded-lg border border-[#ff41b4]/30 
+                       text-[#ff41b4] hover:bg-[#ff41b4]/10 hover:border-[#ff41b4]/60 transition-all"
           >
             <ArtStationIcon />
           </a>
@@ -1075,8 +1075,8 @@ function Footer() {
             href="https://linkedin.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="w-10 h-10 flex items-center justify-center rounded-lg border border-[#00ff41]/30 
-                       text-[#00ff41] hover:bg-[#00ff41]/10 hover:border-[#00ff41]/60 transition-all"
+            className="w-10 h-10 flex items-center justify-center rounded-lg border border-[#ff41b4]/30 
+                       text-[#ff41b4] hover:bg-[#ff41b4]/10 hover:border-[#ff41b4]/60 transition-all"
           >
             <LinkedInIcon />
           </a>
@@ -1084,9 +1084,9 @@ function Footer() {
 
         {/* Legal links */}
         <div className="flex justify-center gap-6 text-xs font-mono text-white/30">
-          <a href="#" className="hover:text-[#00ff41] transition-colors">Privacy Policy</a>
+          <a href="#" className="hover:text-[#ff41b4] transition-colors">Privacy Policy</a>
           <span>|</span>
-          <a href="#" className="hover:text-[#00ff41] transition-colors">Terms of Service</a>
+          <a href="#" className="hover:text-[#ff41b4] transition-colors">Terms of Service</a>
         </div>
       </div>
     </footer>
@@ -1129,14 +1129,14 @@ function ServicesSection() {
       {/* Background pattern */}
       <div className="absolute inset-0 opacity-5 pointer-events-none">
         <div className="absolute inset-0" style={{
-          backgroundImage: `repeating-linear-gradient(0deg, #00ff41 0px, #00ff41 1px, transparent 1px, transparent 60px),
-                           repeating-linear-gradient(90deg, #00ff41 0px, #00ff41 1px, transparent 1px, transparent 60px)`
+          backgroundImage: `repeating-linear-gradient(0deg, #ff41b4 0px, #ff41b4 1px, transparent 1px, transparent 60px),
+                           repeating-linear-gradient(90deg, #ff41b4 0px, #ff41b4 1px, transparent 1px, transparent 60px)`
         }} />
       </div>
       
       <div className="max-w-5xl mx-auto relative z-10">
         {/* Section Header */}
-        <h2 className="text-center font-mono text-[#00ff41] text-2xl md:text-3xl mb-4">
+        <h2 className="text-center font-mono text-[#ff41b4] text-2xl md:text-3xl mb-4">
           [ SERVICES ]
         </h2>
         <p className="text-center font-mono text-xl md:text-2xl text-white/80 mb-4 max-w-2xl mx-auto">
@@ -1151,12 +1151,12 @@ function ServicesSection() {
           {SERVICES.map((service, i) => (
             <div 
               key={i}
-              className="p-6 border border-[#00ff41]/20 rounded-xl bg-[#0d0618]/40 backdrop-blur-sm
-                         hover:border-[#00ff41]/50 hover:bg-[#00ff41]/5 transition-all duration-300
+              className="p-6 border border-[#ff41b4]/20 rounded-xl bg-[#0d0618]/40 backdrop-blur-sm
+                         hover:border-[#ff41b4]/50 hover:bg-[#ff41b4]/5 transition-all duration-300
                          group"
             >
               <div className="text-4xl mb-4">{service.icon}</div>
-              <h3 className="font-mono text-[#00ff41] text-lg mb-3 group-hover:text-[#00ff41] transition-colors">
+              <h3 className="font-mono text-[#ff41b4] text-lg mb-3 group-hover:text-[#ff41b4] transition-colors">
                 {service.title}
               </h3>
               <p className="font-mono text-white/50 text-sm leading-relaxed">
@@ -1173,10 +1173,10 @@ function ServicesSection() {
           </p>
           <a
             href="mailto:mcrevatis03@gmail.com"
-            className="inline-block px-10 py-4 font-mono text-lg text-[#1a0b2e] bg-[#00ff41] 
-                       border-2 border-[#00ff41] hover:bg-transparent hover:text-[#00ff41] 
-                       transition-all duration-300 shadow-[0_0_30px_rgba(0,255,65,0.4)]
-                       hover:shadow-[0_0_50px_rgba(0,255,65,0.6)]"
+            className="inline-block px-10 py-4 font-mono text-lg text-[#1a0b2e] bg-[#ff41b4] 
+                       border-2 border-[#ff41b4] hover:bg-transparent hover:text-[#ff41b4] 
+                       transition-all duration-300 shadow-[0_0_30px_rgba(255,65,180,0.4)]
+                       hover:shadow-[0_0_50px_rgba(255,65,180,0.6)]"
           >
             [ START YOUR PROJECT ]
           </a>
@@ -1202,7 +1202,7 @@ function MobileFallback({ onSelectProject, selectedProject, wireframeMode, onTog
           {[...Array(50)].map((_, i) => (
             <div
               key={i}
-              className="absolute w-1 h-1 bg-[#00ff41] rounded-full animate-pulse"
+              className="absolute w-1 h-1 bg-[#ff41b4] rounded-full animate-pulse"
               style={{
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,
@@ -1212,9 +1212,9 @@ function MobileFallback({ onSelectProject, selectedProject, wireframeMode, onTog
           ))}
         </div>
         <h1 className="text-5xl md:text-8xl font-black text-center mb-4 tracking-tighter">
-          <span className="text-[#00ff41]">PHIL</span>MODS
+          <span className="text-[#ff41b4]">PHIL</span>MODS
         </h1>
-        <p className="text-center text-[#00ff41]/70 font-mono text-sm md:text-base max-w-md">
+        <p className="text-center text-[#ff41b4]/70 font-mono text-sm md:text-base max-w-md">
           Innovative 3D Modeling & Animation
         </p>
         <p className="text-center text-white/50 font-mono text-xs md:text-sm mt-2">
@@ -1225,7 +1225,7 @@ function MobileFallback({ onSelectProject, selectedProject, wireframeMode, onTog
       
       {/* Featured Wireframe Character */}
       <section className="py-20 px-4 flex flex-col items-center">
-        <h2 className="text-center font-mono text-[#00ff41] text-xl mb-8">[ FEATURED WORK ]</h2>
+        <h2 className="text-center font-mono text-[#ff41b4] text-xl mb-8">[ FEATURED WORK ]</h2>
         <WireframeCharacterDisplay />
         <p className="mt-8 text-center font-mono text-white/50 text-sm max-w-md px-4">
           High-quality character models with clean topology, optimized for games
@@ -1234,7 +1234,7 @@ function MobileFallback({ onSelectProject, selectedProject, wireframeMode, onTog
       
       {/* Projects */}
       <section className="py-20 px-4">
-        <h2 className="text-center font-mono text-[#00ff41] text-2xl mb-12">[ PROJECT CAPSULES ]</h2>
+        <h2 className="text-center font-mono text-[#ff41b4] text-2xl mb-12">[ PROJECT CAPSULES ]</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
           {PROJECTS.map((project, i) => (
             <ProjectCapsule key={project.id} project={project} delay={i} onSelect={() => onSelectProject(project)} />
@@ -1348,16 +1348,16 @@ function Index() {
         {/* Hero section */}
         <section className="min-h-screen flex flex-col items-center justify-center pointer-events-none py-20 px-4">
           <h1 className="text-5xl md:text-[8rem] font-black tracking-[-0.05em] text-white/90 leading-none text-center mb-8">
-            <span className="text-[#00ff41]">PHIL</span>MODS
+            <span className="text-[#ff41b4]">PHIL</span>MODS
           </h1>
-          <p className="text-center font-mono text-[#00ff41]/80 text-sm md:text-lg tracking-wider max-w-2xl px-4">
+          <p className="text-center font-mono text-[#ff41b4]/80 text-sm md:text-lg tracking-wider max-w-2xl px-4">
             Innovative 3D Modeling & Animation
           </p>
           <p className="mt-2 text-center font-mono text-white/50 text-xs md:text-sm mb-8">
             Ready for the Metaverse
           </p>
           <CommissionButton />
-          <div className="mt-12 animate-bounce text-[#00ff41]">
+          <div className="mt-12 animate-bounce text-[#ff41b4]">
             <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
             </svg>
@@ -1366,7 +1366,7 @@ function Index() {
 
         {/* Wireframe Character Showcase */}
         <section className="min-h-screen flex flex-col items-center justify-center py-20 px-4">
-          <h2 className="text-center font-mono text-[#00ff41] text-xl md:text-2xl mb-12">
+          <h2 className="text-center font-mono text-[#ff41b4] text-xl md:text-2xl mb-12">
             [ FEATURED WORK ]
           </h2>
           <WireframeCharacterDisplay />
@@ -1389,7 +1389,7 @@ function Index() {
             </div>
           </div>
           
-          <h2 className="text-center font-mono text-[#00ff41] text-2xl md:text-3xl mb-4 mt-16">
+          <h2 className="text-center font-mono text-[#ff41b4] text-2xl md:text-3xl mb-4 mt-16">
             [ THE CREATIVE VOID ]
           </h2>
           <p className="text-center font-mono text-white/40 text-sm mb-16">
@@ -1419,7 +1419,7 @@ function Index() {
 
         {/* Stats Dashboard */}
         <section className="py-20 px-4 bg-gradient-to-b from-transparent to-[#0d0618]/50">
-          <h2 className="text-center font-mono text-[#00ff41] text-2xl md:text-3xl mb-4">
+          <h2 className="text-center font-mono text-[#ff41b4] text-2xl md:text-3xl mb-4">
             [ REAL-TIME STATS ]
           </h2>
           <p className="text-center font-mono text-white/40 text-sm mb-12">
@@ -1473,7 +1473,7 @@ function Index() {
         
         /* Custom neon green crosshair cursor */
         .cursor-crosshair-green {
-          cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cline x1='12' y1='0' x2='12' y2='10' stroke='%2300ff41' stroke-width='2'/%3E%3Cline x1='12' y1='14' x2='12' y2='24' stroke='%2300ff41' stroke-width='2'/%3E%3Cline x1='0' y1='12' x2='10' y2='12' stroke='%2300ff41' stroke-width='2'/%3E%3Cline x1='14' y1='12' x2='24' y2='12' stroke='%2300ff41' stroke-width='2'/%3E%3Ccircle cx='12' cy='12' r='3' stroke='%2300ff41' stroke-width='1.5' fill='none'/%3E%3C/svg%3E") 12 12, crosshair;
+          cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cline x1='12' y1='0' x2='12' y2='10' stroke='%23ff41b4' stroke-width='2'/%3E%3Cline x1='12' y1='14' x2='12' y2='24' stroke='%23ff41b4' stroke-width='2'/%3E%3Cline x1='0' y1='12' x2='10' y2='12' stroke='%23ff41b4' stroke-width='2'/%3E%3Cline x1='14' y1='12' x2='24' y2='12' stroke='%23ff41b4' stroke-width='2'/%3E%3Ccircle cx='12' cy='12' r='3' stroke='%23ff41b4' stroke-width='1.5' fill='none'/%3E%3C/svg%3E") 12 12, crosshair;
         }
 
         /* Commission button pulse animation */
@@ -1483,10 +1483,10 @@ function Index() {
         
         @keyframes commissionPulse {
           0%, 100% {
-            box-shadow: 0 0 20px rgba(0,255,65,0.4);
+            box-shadow: 0 0 20px rgba(255,65,180,0.4);
           }
           50% {
-            box-shadow: 0 0 35px rgba(0,255,65,0.7), 0 0 60px rgba(0,255,65,0.3);
+            box-shadow: 0 0 35px rgba(255,65,180,0.7), 0 0 60px rgba(255,65,180,0.3);
           }
         }
 
