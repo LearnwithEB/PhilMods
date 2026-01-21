@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, Suspense, useMemo } from "react";
+import React, { useState, useEffect, useRef, Suspense, useMemo } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Float, Stars, useGLTF } from "@react-three/drei";
 import gsap from "gsap";
@@ -433,9 +433,37 @@ function WireframeCharacter({ scrollProgress }: { scrollProgress: number }) {
   );
 }
 
+// Placeholder mesh when meow.glb is not available
+function MeowModelFallback({ scrollProgress }: { scrollProgress: number }) {
+  const groupRef = useRef<THREE.Group>(null);
+
+  useFrame((state) => {
+    if (groupRef.current) {
+      groupRef.current.rotation.y = state.clock.elapsedTime * 0.3 + scrollProgress * 0.001;
+    }
+  });
+
+  return (
+    <Float speed={1.5} rotationIntensity={0.3}>
+      <group ref={groupRef} position={[0, 2, 3]} scale={2.5}>
+        <mesh>
+          <torusKnotGeometry args={[0.5, 0.2, 100, 16]} />
+          <meshStandardMaterial 
+            color={TERMINAL_GREEN} 
+            wireframe 
+            emissive={TERMINAL_GREEN}
+            emissiveIntensity={0.3}
+          />
+        </mesh>
+        <pointLight position={[0, 5, 5]} color={TERMINAL_GREEN} intensity={2} />
+      </group>
+    </Float>
+  );
+}
+
 // MeowModel Component - loads meow.glb and layers it above the scene
 // Note: User needs to place their meow.glb file in the public folder for this to work
-function MeowModel({ scrollProgress }: { scrollProgress: number }) {
+function MeowModelInner({ scrollProgress }: { scrollProgress: number }) {
   const groupRef = useRef<THREE.Group>(null);
   const { scene } = useGLTF('/meow.glb');
   const clonedScene = useMemo(() => scene.clone(), [scene]);
@@ -449,13 +477,55 @@ function MeowModel({ scrollProgress }: { scrollProgress: number }) {
 
   return (
     <Float speed={1.5} rotationIntensity={0.3}>
-      <group ref={groupRef} position={[0, 1.5, 2]} scale={2.5}>
+      <group ref={groupRef} position={[0, 2, 3]} scale={2.5}>
         <primitive object={clonedScene} />
         {/* Additional rim lighting for the model */}
         <pointLight position={[0, 5, 5]} color={TERMINAL_GREEN} intensity={2} />
       </group>
     </Float>
   );
+}
+
+// Error boundary wrapper for MeowModel
+function MeowModel({ scrollProgress }: { scrollProgress: number }) {
+  const [hasError, setHasError] = useState(false);
+  
+  // Check if meow.glb exists - if loading fails, Suspense will handle and we fallback
+  if (hasError) {
+    return <MeowModelFallback scrollProgress={scrollProgress} />;
+  }
+
+  return (
+    <ErrorBoundary onError={() => setHasError(true)}>
+      <MeowModelInner scrollProgress={scrollProgress} />
+    </ErrorBoundary>
+  );
+}
+
+// Simple error boundary component
+class ErrorBoundary extends React.Component<
+  { children: React.ReactNode; onError: () => void },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode; onError: () => void }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch() {
+    this.props.onError();
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return null;
+    }
+    return this.props.children;
+  }
 }
 
 // Holographic Emitter Platform (now displays wireframe character image)
@@ -514,17 +584,20 @@ function Scene({ scrollProgress, started }: { scrollProgress: number; started: b
 
   return (
     <>
-      <ambientLight intensity={0.3} />
+      <ambientLight intensity={0.4} />
       <pointLight position={[10, 10, 10]} intensity={1} color={TERMINAL_GREEN} />
       <pointLight position={[-10, -10, -10]} intensity={0.5} color={ACCENT_PINK} />
+      {/* Additional lighting for MeowModel visibility */}
+      <pointLight position={[0, 5, 5]} intensity={1.5} color={TERMINAL_GREEN} />
+      <pointLight position={[5, 3, 3]} intensity={0.8} color="#ffffff" />
       <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
       <CodeParticles count={40} />
       <group position={[0, 0, 0]}>
         <HolographicEmitter scrollProgress={scrollProgress} />
       </group>
 
-      {/* MeowModel - layers above the existing scene */}
-      <Suspense fallback={null}>
+      {/* MeowModel - layers above the existing scene at position [0, 2, 3] */}
+      <Suspense fallback={<MeowModelFallback scrollProgress={scrollProgress} />}>
         <MeowModel scrollProgress={scrollProgress} />
       </Suspense>
 
