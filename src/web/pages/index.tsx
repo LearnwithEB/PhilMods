@@ -791,7 +791,7 @@ function WireframeRat({ mitSectionEndRef, contactSectionStartRef }: { mitSection
   const [hasRunDown, setHasRunDown] = useState(false);
   const [hasRunUp, setHasRunUp] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
-  const [position, setPosition] = useState(-30);
+  const [position, setPosition] = useState(-35);
   const [direction, setDirection] = useState<'right' | 'left'>('right');
   const legRef = useRef(0);
   const animationRef = useRef<number | null>(null);
@@ -812,28 +812,28 @@ function WireframeRat({ mitSectionEndRef, contactSectionStartRef }: { mitSection
   
   useEffect(() => {
     const checkPosition = () => {
-      if (!mitSectionEndRef.current || !contactSectionStartRef.current || isRunning) return;
+      if (isRunning) return;
       
-      const mitRect = mitSectionEndRef.current.getBoundingClientRect();
-      const contactRect = contactSectionStartRef.current.getBoundingClientRect();
-      const viewportHeight = window.innerHeight;
+      // Simple scroll percentage trigger (75% down the page)
+      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollPercent = (window.scrollY / scrollHeight) * 100;
       
-      // Trigger when user is in transition zone: MIT/Mya section is mostly scrolled past 
-      // and contact section is approaching - the rat "inspects" between achievements and contact
-      const mitScrolledPast = mitRect.bottom < viewportHeight * 0.5;
-      const contactApproaching = contactRect.top < viewportHeight * 1.3;
-      const inZone = mitScrolledPast && contactApproaching;
+      console.log('[RAT DEBUG] Scroll %:', scrollPercent.toFixed(1), 'Direction:', scrollDirection.current, 'HasRunDown:', hasRunDown, 'HasRunUp:', hasRunUp);
+      
+      // Trigger at 70-80% scroll range
+      const inTriggerZone = scrollPercent >= 70 && scrollPercent <= 85;
       
       // Check for scrolling DOWN through the zone
-      if (inZone && scrollDirection.current === 'down' && !hasRunDown) {
+      if (inTriggerZone && scrollDirection.current === 'down' && !hasRunDown) {
+        console.log('[RAT] 🐀 STARTING RUN DOWN!');
         setIsRunning(true);
         setDirection('right');
-        setPosition(-30);
+        setPosition(-35);
         setHasRunDown(true);
-        setHasRunUp(false); // Reset up so it can run again when scrolling back
+        setHasRunUp(false);
         
         const startTime = Date.now();
-        const duration = 4500;
+        const duration = 6500; // Slower - 6.5 seconds
         
         const animate = () => {
           const elapsed = Date.now() - startTime;
@@ -843,14 +843,15 @@ function WireframeRat({ mitSectionEndRef, contactSectionStartRef }: { mitSection
             ? 1.5 * progress * progress 
             : 1 - Math.pow(-2 * progress + 2, 2) / 2.5;
           
-          const newPos = -30 + (eased * 160); // -30 to 130vw (left to right)
+          const newPos = -35 + (eased * 170); // -35 to 135vw (left to right)
           setPosition(newPos);
-          legRef.current += 0.35;
+          legRef.current += 0.3;
           
           if (progress < 1) {
             animationRef.current = requestAnimationFrame(animate);
           } else {
             setIsRunning(false);
+            console.log('[RAT] 🐀 RUN DOWN COMPLETE');
           }
         };
         
@@ -858,15 +859,16 @@ function WireframeRat({ mitSectionEndRef, contactSectionStartRef }: { mitSection
       }
       
       // Check for scrolling UP through the zone  
-      if (inZone && scrollDirection.current === 'up' && !hasRunUp) {
+      if (inTriggerZone && scrollDirection.current === 'up' && !hasRunUp) {
+        console.log('[RAT] 🐀 STARTING RUN UP!');
         setIsRunning(true);
         setDirection('left');
-        setPosition(130);
+        setPosition(135);
         setHasRunUp(true);
-        setHasRunDown(false); // Reset down so it can run again when scrolling back
+        setHasRunDown(false);
         
         const startTime = Date.now();
-        const duration = 4500;
+        const duration = 6500;
         
         const animate = () => {
           const elapsed = Date.now() - startTime;
@@ -876,14 +878,15 @@ function WireframeRat({ mitSectionEndRef, contactSectionStartRef }: { mitSection
             ? 1.5 * progress * progress 
             : 1 - Math.pow(-2 * progress + 2, 2) / 2.5;
           
-          const newPos = 130 - (eased * 160); // 130 to -30vw (right to left)
+          const newPos = 135 - (eased * 170); // 135 to -35vw (right to left)
           setPosition(newPos);
-          legRef.current += 0.35;
+          legRef.current += 0.3;
           
           if (progress < 1) {
             animationRef.current = requestAnimationFrame(animate);
           } else {
             setIsRunning(false);
+            console.log('[RAT] 🐀 RUN UP COMPLETE');
           }
         };
         
@@ -900,88 +903,87 @@ function WireframeRat({ mitSectionEndRef, contactSectionStartRef }: { mitSection
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [mitSectionEndRef, contactSectionStartRef, hasRunDown, hasRunUp, isRunning]);
+  }, [hasRunDown, hasRunUp, isRunning]);
   
   // Reset flags when user scrolls far away from the zone
   useEffect(() => {
     const handleReset = () => {
-      if (!mitSectionEndRef.current || !contactSectionStartRef.current) return;
-      const mitRect = mitSectionEndRef.current.getBoundingClientRect();
-      const contactRect = contactSectionStartRef.current.getBoundingClientRect();
+      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollPercent = (window.scrollY / scrollHeight) * 100;
       
-      // Reset when far above the zone (MIT visible at top)
-      if (mitRect.top > window.innerHeight * 0.8) {
+      // Reset when far above the zone (< 50%)
+      if (scrollPercent < 50) {
         setHasRunDown(false);
       }
-      // Reset when far below the zone (contact scrolled past)
-      if (contactRect.bottom < window.innerHeight * 0.2) {
+      // Reset when far below the zone (> 95%)
+      if (scrollPercent > 95) {
         setHasRunUp(false);
       }
     };
     
     window.addEventListener('scroll', handleReset);
     return () => window.removeEventListener('scroll', handleReset);
-  }, [mitSectionEndRef, contactSectionStartRef]);
+  }, []);
   
   if (!isRunning) return null;
   
   const legAngle = Math.sin(legRef.current) * 35;
-  const bodyBob = Math.sin(legRef.current * 2) * 8;
+  const bodyBob = Math.sin(legRef.current * 2) * 10;
   
   return (
     <div 
       className="fixed pointer-events-none"
       style={{ 
         left: `${position}vw`, 
-        top: '38vh',
+        top: '45vh',
         transform: `translateY(${bodyBob}px) scaleX(${direction === 'left' ? -1 : 1})`,
-        zIndex: 9999
+        zIndex: 99999
       }}
     >
-      {/* Glow backdrop */}
+      {/* Large glow backdrop */}
       <div 
-        className="absolute inset-0 rounded-full"
+        className="absolute rounded-full"
         style={{
-          width: '240px',
-          height: '160px',
-          background: 'radial-gradient(ellipse at center, rgba(255,65,180,0.3) 0%, transparent 70%)',
-          transform: 'translate(-40px, -40px)',
-          filter: 'blur(20px)'
+          width: '400px',
+          height: '300px',
+          background: 'radial-gradient(ellipse at center, rgba(255,65,180,0.5) 0%, rgba(255,65,180,0.2) 40%, transparent 70%)',
+          transform: 'translate(-100px, -100px)',
+          filter: 'blur(30px)'
         }}
       />
       <svg 
-        width="200" 
-        height="130" 
+        width="280" 
+        height="180" 
         viewBox="0 0 80 50"
         style={{ 
-          filter: 'drop-shadow(0 0 25px #ff41b4) drop-shadow(0 0 50px #ff41b4) drop-shadow(0 0 10px #ff41b4)'
+          filter: 'drop-shadow(0 0 30px #ff41b4) drop-shadow(0 0 60px #ff41b4) drop-shadow(0 0 15px #ff41b4)'
         }}
       >
         {/* Body */}
         <ellipse 
           cx="35" cy="25" rx="20" ry="12" 
-          fill="rgba(255,65,180,0.1)" 
+          fill="rgba(255,65,180,0.15)" 
           stroke="#ff41b4" 
           strokeWidth="2.5"
         />
         {/* Head */}
         <circle 
           cx="58" cy="22" r="10" 
-          fill="rgba(255,65,180,0.1)" 
+          fill="rgba(255,65,180,0.15)" 
           stroke="#ff41b4" 
           strokeWidth="2.5"
         />
         {/* Ear */}
         <circle 
           cx="64" cy="14" r="5" 
-          fill="rgba(255,65,180,0.1)" 
+          fill="rgba(255,65,180,0.15)" 
           stroke="#ff41b4" 
           strokeWidth="2"
         />
         {/* Second ear */}
         <circle 
           cx="56" cy="12" r="4" 
-          fill="rgba(255,65,180,0.1)" 
+          fill="rgba(255,65,180,0.15)" 
           stroke="#ff41b4" 
           strokeWidth="2"
         />
@@ -1039,24 +1041,25 @@ function WireframeRat({ mitSectionEndRef, contactSectionStartRef }: { mitSection
       </svg>
       {/* Squeak text bubble - bigger and more visible */}
       <div 
-        className="absolute -top-12 left-16 font-mono text-[#ff41b4] text-lg font-bold"
+        className="absolute -top-16 left-20 font-mono text-[#ff41b4] text-xl font-bold whitespace-nowrap"
         style={{ 
           animation: 'pulse 0.4s infinite',
-          textShadow: '0 0 20px #ff41b4, 0 0 40px #ff41b4'
+          textShadow: '0 0 25px #ff41b4, 0 0 50px #ff41b4, 0 0 75px #ff41b4'
         }}
       >
         *squeak squeak!*
       </div>
       {/* Trail particles */}
-      <div className="absolute -left-8 top-1/2 flex gap-2">
-        {[0, 1, 2, 3].map(i => (
+      <div className="absolute -left-12 top-1/2 flex gap-3">
+        {[0, 1, 2, 3, 4].map(i => (
           <div 
             key={i}
-            className="w-2 h-2 rounded-full bg-[#ff41b4]"
+            className="w-3 h-3 rounded-full bg-[#ff41b4]"
             style={{
-              opacity: 0.8 - i * 0.2,
-              transform: `scale(${1 - i * 0.2})`,
-              animation: `pulse ${0.3 + i * 0.1}s infinite`
+              opacity: 0.9 - i * 0.15,
+              transform: `scale(${1 - i * 0.15})`,
+              animation: `pulse ${0.3 + i * 0.1}s infinite`,
+              boxShadow: '0 0 10px #ff41b4'
             }}
           />
         ))}
