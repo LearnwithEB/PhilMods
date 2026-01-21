@@ -1301,7 +1301,7 @@ function Footer() {
                 filter: 'drop-shadow(0 0 12px #00d9ff)'
               }}
             >
-              🖖
+              🖖🏾
             </span>
             <span 
               className="font-mono text-xs tracking-widest"
