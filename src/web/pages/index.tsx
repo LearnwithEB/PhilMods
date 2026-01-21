@@ -786,8 +786,8 @@ function MatrixRain({ active }: { active: boolean }) {
   );
 }
 
-// Wireframe Rat Component - Runs across screen during section transitions
-function WireframeRat({ projectsEndRef, servicesStartRef }: { projectsEndRef: React.RefObject<HTMLDivElement | null>; servicesStartRef: React.RefObject<HTMLDivElement | null> }) {
+// Wireframe Rat Component - Runs across screen between MIT Achievement and Contact section
+function WireframeRat({ mitSectionEndRef, contactSectionStartRef }: { mitSectionEndRef: React.RefObject<HTMLDivElement | null>; contactSectionStartRef: React.RefObject<HTMLDivElement | null> }) {
   const [hasRun, setHasRun] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
   const [position, setPosition] = useState(-30);
@@ -796,18 +796,18 @@ function WireframeRat({ projectsEndRef, servicesStartRef }: { projectsEndRef: Re
   
   useEffect(() => {
     const checkPosition = () => {
-      if (!projectsEndRef.current || !servicesStartRef.current || hasRun || isRunning) return;
+      if (!mitSectionEndRef.current || !contactSectionStartRef.current || hasRun || isRunning) return;
       
-      const projectsRect = projectsEndRef.current.getBoundingClientRect();
-      const servicesRect = servicesStartRef.current.getBoundingClientRect();
+      const mitRect = mitSectionEndRef.current.getBoundingClientRect();
+      const contactRect = contactSectionStartRef.current.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
       
-      // Trigger when user is in transition zone: projects section is mostly scrolled past 
-      // and services section is approaching
-      const projectsScrolledPast = projectsRect.bottom < viewportHeight * 0.6;
-      const servicesApproaching = servicesRect.top < viewportHeight * 1.2;
+      // Trigger when user is in transition zone: MIT/Mya section is mostly scrolled past 
+      // and contact section is approaching - the rat "inspects" between achievements and contact
+      const mitScrolledPast = mitRect.bottom < viewportHeight * 0.5;
+      const contactApproaching = contactRect.top < viewportHeight * 1.3;
       
-      if (projectsScrolledPast && servicesApproaching) {
+      if (mitScrolledPast && contactApproaching) {
         setIsRunning(true);
         setPosition(-30);
         
@@ -848,22 +848,22 @@ function WireframeRat({ projectsEndRef, servicesStartRef }: { projectsEndRef: Re
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [projectsEndRef, servicesStartRef, hasRun, isRunning]);
+  }, [mitSectionEndRef, contactSectionStartRef, hasRun, isRunning]);
   
   // Reset when user scrolls back up significantly
   useEffect(() => {
     const handleReset = () => {
-      if (!projectsEndRef.current || !hasRun) return;
-      const projectsRect = projectsEndRef.current.getBoundingClientRect();
-      // Reset when projects section comes back into upper view
-      if (projectsRect.top > window.innerHeight * 0.5) {
+      if (!mitSectionEndRef.current || !hasRun) return;
+      const mitRect = mitSectionEndRef.current.getBoundingClientRect();
+      // Reset when MIT section comes back into upper view
+      if (mitRect.top > window.innerHeight * 0.5) {
         setHasRun(false);
       }
     };
     
     window.addEventListener('scroll', handleReset);
     return () => window.removeEventListener('scroll', handleReset);
-  }, [projectsEndRef, hasRun]);
+  }, [mitSectionEndRef, hasRun]);
   
   if (!isRunning) return null;
   
@@ -1120,7 +1120,7 @@ function LinkedInIcon() {
 }
 
 // Contact Section - Open Network
-function ContactSection() {
+function ContactSection({ contactSectionStartRef }: { contactSectionStartRef?: React.RefObject<HTMLDivElement | null> }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
@@ -1171,6 +1171,9 @@ function ContactSection() {
 
   return (
     <section id="contact-form" className="min-h-screen relative py-20 px-4 overflow-hidden">
+      {/* Ref marker for rat trigger - start of contact section */}
+      {contactSectionStartRef && <div ref={contactSectionStartRef} className="absolute top-0 left-0 right-0 h-1" />}
+      
       {/* Grid floor effect */}
       <div className="absolute inset-0 pointer-events-none">
         <div 
@@ -1457,7 +1460,7 @@ const SERVICES = [
 ];
 
 // Services Section
-function ServicesSection() {
+function ServicesSection({ mitSectionEndRef }: { mitSectionEndRef?: React.RefObject<HTMLDivElement | null> }) {
   return (
     <section className="py-20 px-4 relative overflow-hidden">
       {/* Background pattern */}
@@ -1623,6 +1626,9 @@ function ServicesSection() {
             </div>
           </div>
         </div>
+        
+        {/* Ref marker for rat trigger - end of MIT/Mya section */}
+        {mitSectionEndRef && <div ref={mitSectionEndRef} className="h-1" />}
       </div>
     </section>
   );
@@ -1715,8 +1721,8 @@ function Index() {
   const [wireframeMode, setWireframeMode] = useState(false);
   const [matrixMode, setMatrixMode] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const projectsEndRef = useRef<HTMLDivElement>(null);
-  const servicesStartRef = useRef<HTMLDivElement>(null);
+  const mitSectionEndRef = useRef<HTMLDivElement>(null);
+  const contactSectionStartRef = useRef<HTMLDivElement>(null);
 
   // Konami code easter egg
   useKonamiCode(() => setMatrixMode(true));
@@ -1773,7 +1779,7 @@ function Index() {
       {!started && <LoadingScreen onStart={handleStart} />}
       <StatusBeacon />
       <MatrixRain active={matrixMode} />
-      <WireframeRat projectsEndRef={projectsEndRef} servicesStartRef={servicesStartRef} />
+      <WireframeRat mitSectionEndRef={mitSectionEndRef} contactSectionStartRef={contactSectionStartRef} />
 
       {/* Fixed 3D Canvas */}
       <div className="fixed inset-0 z-0">
@@ -1861,8 +1867,6 @@ function Index() {
             </div>
           </div>
           
-          {/* Ref marker for rat trigger - end of projects section */}
-          <div ref={projectsEndRef} className="absolute bottom-0 left-0 right-0 h-1" />
         </section>
 
         {/* Process Viewer Section */}
@@ -1870,11 +1874,8 @@ function Index() {
           <ProcessViewer />
         </section>
 
-        {/* Services Section ref marker for rat trigger */}
-        <div ref={servicesStartRef} className="h-1" />
-        
         {/* Services Section */}
-        <ServicesSection />
+        <ServicesSection mitSectionEndRef={mitSectionEndRef} />
 
         {/* About Console Section */}
         <section className="min-h-screen flex items-center justify-center p-8 bg-gradient-to-t from-[#0d0618] to-transparent">
@@ -1882,7 +1883,7 @@ function Index() {
         </section>
 
         {/* Contact Section - Open Network */}
-        <ContactSection />
+        <ContactSection contactSectionStartRef={contactSectionStartRef} />
 
         {/* Footer */}
         <Footer />
