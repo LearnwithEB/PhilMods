@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, Suspense, useMemo } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Float, Stars } from "@react-three/drei";
+import { Float, Stars, useGLTF } from "@react-three/drei";
 import gsap from "gsap";
 import * as THREE from "three";
 
@@ -408,43 +408,50 @@ function FloatingCodeParticle({ x, y, z, speed, size }: {
   );
 }
 
-// Enhanced 3D Wireframe Sphere with progressive fill
-function WireframeSphere({ scrollProgress }: { scrollProgress: number }) {
-  const meshRef = useRef<THREE.Mesh>(null);
-  const solidMeshRef = useRef<THREE.Mesh>(null);
+// MEOW Character 3D Model with progressive fill
+function MeowModel({ scrollProgress }: { scrollProgress: number }) {
+  const groupRef = useRef<THREE.Group>(null);
+  const { scene } = useGLTF('/meow.gltf');
+  
+  const fillOpacity = Math.min(scrollProgress * 3, 0.8);
 
   useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.y = state.clock.elapsedTime * 0.3 + scrollProgress * Math.PI * 2;
-      meshRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.2) * 0.2;
-    }
-    if (solidMeshRef.current) {
-      solidMeshRef.current.rotation.y = state.clock.elapsedTime * 0.3 + scrollProgress * Math.PI * 2;
-      solidMeshRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.2) * 0.2;
+    if (groupRef.current) {
+      groupRef.current.rotation.y = state.clock.elapsedTime * 0.3 + scrollProgress * Math.PI * 2;
+      groupRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.2) * 0.2;
     }
   });
 
-  const fillOpacity = Math.min(scrollProgress * 3, 0.6);
+  // Clone the scene to apply custom materials
+  const clonedScene = useMemo(() => {
+    const clone = scene.clone();
+    clone.traverse((child) => {
+      if ((child as THREE.Mesh).isMesh) {
+        const mesh = child as THREE.Mesh;
+        // Create a glowing terminal green material
+        mesh.material = new THREE.MeshStandardMaterial({
+          color: TERMINAL_GREEN,
+          emissive: TERMINAL_GREEN,
+          emissiveIntensity: 0.3 + fillOpacity * 0.5,
+          transparent: true,
+          opacity: 0.5 + fillOpacity * 0.5,
+          metalness: 0.5,
+          roughness: 0.3,
+        });
+      }
+    });
+    return clone;
+  }, [scene, fillOpacity]);
 
   return (
-    <group>
-      <mesh ref={solidMeshRef}>
-        <icosahedronGeometry args={[1.45, 2]} />
-        <meshStandardMaterial 
-          color={TERMINAL_GREEN} 
-          transparent 
-          opacity={fillOpacity}
-          emissive={TERMINAL_GREEN}
-          emissiveIntensity={fillOpacity * 0.5}
-        />
-      </mesh>
-      <mesh ref={meshRef}>
-        <icosahedronGeometry args={[1.5, 2]} />
-        <meshBasicMaterial color={TERMINAL_GREEN} wireframe transparent opacity={0.8} />
-      </mesh>
+    <group ref={groupRef} scale={1.5} position={[0, 0, 0]}>
+      <primitive object={clonedScene} />
     </group>
   );
 }
+
+// Preload the GLTF model
+useGLTF.preload('/meow.gltf');
 
 // Holographic Emitter Platform
 function HolographicEmitter({ scrollProgress }: { scrollProgress: number }) {
@@ -467,7 +474,7 @@ function HolographicEmitter({ scrollProgress }: { scrollProgress: number }) {
           <torusGeometry args={[1.8, 0.05, 16, 100]} />
           <meshBasicMaterial color={TERMINAL_GREEN} />
         </mesh>
-        <WireframeSphere scrollProgress={scrollProgress} />
+        <MeowModel scrollProgress={scrollProgress} />
         <mesh position={[0, -0.5, 0]}>
           <cylinderGeometry args={[0.3, 1.5, 2, 32, 1, true]} />
           <meshBasicMaterial color={TERMINAL_GREEN} transparent opacity={0.1} side={THREE.DoubleSide} />
