@@ -408,45 +408,29 @@ function FloatingCodeParticle({ x, y, z, speed, size }: {
   );
 }
 
-// Enhanced 3D Wireframe Sphere with progressive fill
-function WireframeSphere({ scrollProgress }: { scrollProgress: number }) {
-  const meshRef = useRef<THREE.Mesh>(null);
-  const solidMeshRef = useRef<THREE.Mesh>(null);
+// Wireframe Character Image Component (replaces 3D sphere)
+function WireframeCharacter({ scrollProgress }: { scrollProgress: number }) {
+  const groupRef = useRef<THREE.Group>(null);
 
   useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.y = state.clock.elapsedTime * 0.3 + scrollProgress * Math.PI * 2;
-      meshRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.2) * 0.2;
-    }
-    if (solidMeshRef.current) {
-      solidMeshRef.current.rotation.y = state.clock.elapsedTime * 0.3 + scrollProgress * Math.PI * 2;
-      solidMeshRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.2) * 0.2;
+    if (groupRef.current) {
+      // Rotate on Y-axis during scroll with gentle continuous rotation
+      groupRef.current.rotation.y = state.clock.elapsedTime * 0.2 + scrollProgress * Math.PI * 2;
     }
   });
 
-  const fillOpacity = Math.min(scrollProgress * 3, 0.6);
-
   return (
-    <group>
-      <mesh ref={solidMeshRef}>
-        <icosahedronGeometry args={[1.45, 2]} />
-        <meshStandardMaterial 
-          color={TERMINAL_GREEN} 
-          transparent 
-          opacity={fillOpacity}
-          emissive={TERMINAL_GREEN}
-          emissiveIntensity={fillOpacity * 0.5}
-        />
-      </mesh>
-      <mesh ref={meshRef}>
-        <icosahedronGeometry args={[1.5, 2]} />
-        <meshBasicMaterial color={TERMINAL_GREEN} wireframe transparent opacity={0.8} />
+    <group ref={groupRef}>
+      {/* Placeholder mesh for 3D presence - the actual image is rendered in HTML overlay */}
+      <mesh>
+        <boxGeometry args={[0.1, 0.1, 0.1]} />
+        <meshBasicMaterial transparent opacity={0} />
       </mesh>
     </group>
   );
 }
 
-// Holographic Emitter Platform
+// Holographic Emitter Platform (now displays wireframe character image)
 function HolographicEmitter({ scrollProgress }: { scrollProgress: number }) {
   const groupRef = useRef<THREE.Group>(null);
 
@@ -459,19 +443,23 @@ function HolographicEmitter({ scrollProgress }: { scrollProgress: number }) {
   return (
     <Float speed={2} rotationIntensity={0.2} floatIntensity={0.5}>
       <group ref={groupRef} position={[0, -0.5, 0]}>
+        {/* Platform base */}
         <mesh position={[0, -1.5, 0]} rotation={[-Math.PI / 2, 0, 0]}>
           <cylinderGeometry args={[2, 2.2, 0.3, 32]} />
           <meshStandardMaterial color="#2a1848" metalness={0.8} roughness={0.2} />
         </mesh>
+        {/* Glowing ring */}
         <mesh position={[0, -1.35, 0]} rotation={[-Math.PI / 2, 0, 0]}>
           <torusGeometry args={[1.8, 0.05, 16, 100]} />
           <meshBasicMaterial color={TERMINAL_GREEN} />
         </mesh>
-        <WireframeSphere scrollProgress={scrollProgress} />
+        {/* Holographic projection beam */}
         <mesh position={[0, -0.5, 0]}>
           <cylinderGeometry args={[0.3, 1.5, 2, 32, 1, true]} />
           <meshBasicMaterial color={TERMINAL_GREEN} transparent opacity={0.1} side={THREE.DoubleSide} />
         </mesh>
+        {/* Keep a small wireframe element for ambient 3D effect */}
+        <WireframeCharacter scrollProgress={scrollProgress} />
       </group>
     </Float>
   );
@@ -1146,6 +1134,26 @@ function MobileFallback({ onSelectProject, selectedProject, wireframeMode, onTog
             />
           ))}
         </div>
+        
+        {/* Wireframe Character Image - Mobile */}
+        <div className="relative mb-8" style={{ animation: 'floatCharacter 4s ease-in-out infinite' }}>
+          <div 
+            className="absolute inset-0 blur-xl opacity-50"
+            style={{
+              background: 'radial-gradient(circle at center, rgba(0,255,65,0.4) 0%, transparent 70%)',
+              transform: 'scale(1.3)'
+            }}
+          />
+          <img 
+            src="./wireframe-character.png" 
+            alt="Wireframe Character - Clean Topology Demo"
+            className="relative w-48 md:w-64 h-auto"
+            style={{
+              filter: 'drop-shadow(0 0 20px rgba(0, 255, 65, 0.5))'
+            }}
+          />
+        </div>
+        
         <h1 className="text-5xl md:text-8xl font-black text-center mb-4 tracking-tighter">
           <span className="text-[#00ff41]">PHIL</span>MODS
         </h1>
@@ -1272,21 +1280,61 @@ function Index() {
       {/* Scrollable content overlay */}
       <div className="relative z-10">
         {/* Hero section */}
-        <section className="h-screen flex flex-col items-center justify-center pointer-events-none">
-          <h1 className="text-6xl md:text-[10rem] font-black tracking-[-0.05em] text-white/90 leading-none text-center">
-            <span className="text-[#00ff41]">PHIL</span>MODS
-          </h1>
-          <p className="mt-6 text-center font-mono text-[#00ff41]/80 text-sm md:text-lg tracking-wider max-w-2xl px-4">
-            Innovative 3D Modeling & Animation
-          </p>
-          <p className="mt-2 text-center font-mono text-white/50 text-xs md:text-sm">
-            Ready for the Metaverse
-          </p>
-          <CommissionButton />
-          <div className="mt-16 animate-bounce text-[#00ff41]">
-            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-            </svg>
+        <section className="h-screen flex flex-col items-center justify-center pointer-events-none relative">
+          {/* Wireframe Character Image - Main Hero Centerpiece */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div 
+              className="relative animate-float"
+              style={{
+                animation: 'floatCharacter 4s ease-in-out infinite, rotateGlow 8s linear infinite'
+              }}
+            >
+              {/* Glow effect behind image */}
+              <div 
+                className="absolute inset-0 blur-2xl opacity-50"
+                style={{
+                  background: `radial-gradient(circle at center, ${TERMINAL_GREEN}40 0%, transparent 70%)`,
+                  transform: 'scale(1.3)'
+                }}
+              />
+              {/* Main wireframe character image */}
+              <img 
+                src="./wireframe-character.png" 
+                alt="Wireframe Character - Clean Topology Demo"
+                className="relative w-64 md:w-80 lg:w-96 h-auto drop-shadow-[0_0_30px_rgba(0,255,65,0.6)]"
+                style={{
+                  filter: 'drop-shadow(0 0 20px rgba(0, 255, 65, 0.4)) drop-shadow(0 0 40px rgba(0, 255, 65, 0.2))'
+                }}
+              />
+              {/* Scan line overlay effect */}
+              <div 
+                className="absolute inset-0 pointer-events-none opacity-20"
+                style={{
+                  background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,65,0.1) 2px, rgba(0,255,65,0.1) 4px)'
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Text content overlaid */}
+          <div className="relative z-10 mt-[55vh] md:mt-[50vh]">
+            <h1 className="text-6xl md:text-[10rem] font-black tracking-[-0.05em] text-white/90 leading-none text-center">
+              <span className="text-[#00ff41]">PHIL</span>MODS
+            </h1>
+            <p className="mt-6 text-center font-mono text-[#00ff41]/80 text-sm md:text-lg tracking-wider max-w-2xl px-4 mx-auto">
+              Innovative 3D Modeling & Animation
+            </p>
+            <p className="mt-2 text-center font-mono text-white/50 text-xs md:text-sm">
+              Ready for the Metaverse
+            </p>
+            <div className="flex justify-center">
+              <CommissionButton />
+            </div>
+            <div className="mt-8 flex justify-center animate-bounce text-[#00ff41]">
+              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+              </svg>
+            </div>
           </div>
         </section>
 
@@ -1408,6 +1456,17 @@ function Index() {
         @keyframes fadeIn {
           from { opacity: 0; transform: translateY(20px); }
           to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes floatCharacter {
+          0%, 100% { transform: translateY(0) scale(1); }
+          50% { transform: translateY(-20px) scale(1.02); }
+        }
+
+        @keyframes rotateGlow {
+          0% { filter: drop-shadow(0 0 20px rgba(0, 255, 65, 0.4)) drop-shadow(0 0 40px rgba(0, 255, 65, 0.2)); }
+          50% { filter: drop-shadow(0 0 30px rgba(0, 255, 65, 0.6)) drop-shadow(0 0 60px rgba(0, 255, 65, 0.3)); }
+          100% { filter: drop-shadow(0 0 20px rgba(0, 255, 65, 0.4)) drop-shadow(0 0 40px rgba(0, 255, 65, 0.2)); }
         }
         
         @keyframes floatCapsule {
