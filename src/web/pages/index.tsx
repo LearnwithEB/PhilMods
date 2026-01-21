@@ -788,15 +788,31 @@ function MatrixRain({ active }: { active: boolean }) {
 
 // Wireframe Rat Component - Runs across screen between MIT Achievement and Contact section
 function WireframeRat({ mitSectionEndRef, contactSectionStartRef }: { mitSectionEndRef: React.RefObject<HTMLDivElement | null>; contactSectionStartRef: React.RefObject<HTMLDivElement | null> }) {
-  const [hasRun, setHasRun] = useState(false);
+  const [hasRunDown, setHasRunDown] = useState(false);
+  const [hasRunUp, setHasRunUp] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
   const [position, setPosition] = useState(-30);
+  const [direction, setDirection] = useState<'right' | 'left'>('right');
   const legRef = useRef(0);
   const animationRef = useRef<number | null>(null);
+  const lastScrollY = useRef(0);
+  const scrollDirection = useRef<'down' | 'up'>('down');
+  
+  // Track scroll direction
+  useEffect(() => {
+    const updateScrollDirection = () => {
+      const currentScrollY = window.scrollY;
+      scrollDirection.current = currentScrollY > lastScrollY.current ? 'down' : 'up';
+      lastScrollY.current = currentScrollY;
+    };
+    
+    window.addEventListener('scroll', updateScrollDirection);
+    return () => window.removeEventListener('scroll', updateScrollDirection);
+  }, []);
   
   useEffect(() => {
     const checkPosition = () => {
-      if (!mitSectionEndRef.current || !contactSectionStartRef.current || hasRun || isRunning) return;
+      if (!mitSectionEndRef.current || !contactSectionStartRef.current || isRunning) return;
       
       const mitRect = mitSectionEndRef.current.getBoundingClientRect();
       const contactRect = contactSectionStartRef.current.getBoundingClientRect();
@@ -806,32 +822,68 @@ function WireframeRat({ mitSectionEndRef, contactSectionStartRef }: { mitSection
       // and contact section is approaching - the rat "inspects" between achievements and contact
       const mitScrolledPast = mitRect.bottom < viewportHeight * 0.5;
       const contactApproaching = contactRect.top < viewportHeight * 1.3;
+      const inZone = mitScrolledPast && contactApproaching;
       
-      if (mitScrolledPast && contactApproaching) {
+      // Check for scrolling DOWN through the zone
+      if (inZone && scrollDirection.current === 'down' && !hasRunDown) {
         setIsRunning(true);
+        setDirection('right');
         setPosition(-30);
+        setHasRunDown(true);
+        setHasRunUp(false); // Reset up so it can run again when scrolling back
         
         const startTime = Date.now();
-        const duration = 4500; // 4.5 seconds to cross - quick scamper
+        const duration = 4500;
         
         const animate = () => {
           const elapsed = Date.now() - startTime;
           const progress = Math.min(elapsed / duration, 1);
           
-          // Eased movement - playful acceleration
           const eased = progress < 0.3 
             ? 1.5 * progress * progress 
             : 1 - Math.pow(-2 * progress + 2, 2) / 2.5;
           
-          const newPos = -30 + (eased * 160); // -30 to 130vw
+          const newPos = -30 + (eased * 160); // -30 to 130vw (left to right)
           setPosition(newPos);
-          legRef.current += 0.35; // Scampering leg movement
+          legRef.current += 0.35;
           
           if (progress < 1) {
             animationRef.current = requestAnimationFrame(animate);
           } else {
             setIsRunning(false);
-            setHasRun(true);
+          }
+        };
+        
+        animationRef.current = requestAnimationFrame(animate);
+      }
+      
+      // Check for scrolling UP through the zone  
+      if (inZone && scrollDirection.current === 'up' && !hasRunUp) {
+        setIsRunning(true);
+        setDirection('left');
+        setPosition(130);
+        setHasRunUp(true);
+        setHasRunDown(false); // Reset down so it can run again when scrolling back
+        
+        const startTime = Date.now();
+        const duration = 4500;
+        
+        const animate = () => {
+          const elapsed = Date.now() - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          
+          const eased = progress < 0.3 
+            ? 1.5 * progress * progress 
+            : 1 - Math.pow(-2 * progress + 2, 2) / 2.5;
+          
+          const newPos = 130 - (eased * 160); // 130 to -30vw (right to left)
+          setPosition(newPos);
+          legRef.current += 0.35;
+          
+          if (progress < 1) {
+            animationRef.current = requestAnimationFrame(animate);
+          } else {
+            setIsRunning(false);
           }
         };
         
@@ -840,7 +892,7 @@ function WireframeRat({ mitSectionEndRef, contactSectionStartRef }: { mitSection
     };
     
     window.addEventListener('scroll', checkPosition);
-    checkPosition(); // Initial check
+    checkPosition();
     
     return () => {
       window.removeEventListener('scroll', checkPosition);
@@ -848,22 +900,28 @@ function WireframeRat({ mitSectionEndRef, contactSectionStartRef }: { mitSection
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [mitSectionEndRef, contactSectionStartRef, hasRun, isRunning]);
+  }, [mitSectionEndRef, contactSectionStartRef, hasRunDown, hasRunUp, isRunning]);
   
-  // Reset when user scrolls back up significantly
+  // Reset flags when user scrolls far away from the zone
   useEffect(() => {
     const handleReset = () => {
-      if (!mitSectionEndRef.current || !hasRun) return;
+      if (!mitSectionEndRef.current || !contactSectionStartRef.current) return;
       const mitRect = mitSectionEndRef.current.getBoundingClientRect();
-      // Reset when MIT section comes back into upper view
-      if (mitRect.top > window.innerHeight * 0.5) {
-        setHasRun(false);
+      const contactRect = contactSectionStartRef.current.getBoundingClientRect();
+      
+      // Reset when far above the zone (MIT visible at top)
+      if (mitRect.top > window.innerHeight * 0.8) {
+        setHasRunDown(false);
+      }
+      // Reset when far below the zone (contact scrolled past)
+      if (contactRect.bottom < window.innerHeight * 0.2) {
+        setHasRunUp(false);
       }
     };
     
     window.addEventListener('scroll', handleReset);
     return () => window.removeEventListener('scroll', handleReset);
-  }, [mitSectionEndRef, hasRun]);
+  }, [mitSectionEndRef, contactSectionStartRef]);
   
   if (!isRunning) return null;
   
@@ -875,8 +933,8 @@ function WireframeRat({ mitSectionEndRef, contactSectionStartRef }: { mitSection
       className="fixed pointer-events-none"
       style={{ 
         left: `${position}vw`, 
-        top: '45vh',
-        transform: `translateY(${bodyBob}px)`,
+        top: '38vh',
+        transform: `translateY(${bodyBob}px) scaleX(${direction === 'left' ? -1 : 1})`,
         zIndex: 9999
       }}
     >
