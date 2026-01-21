@@ -1291,20 +1291,26 @@ function Footer() {
           <p className="font-mono text-white/50 text-sm">
             © 2026 PHILMODS | Bringing Ideas to Life Through Innovation
           </p>
-          <p className="font-mono text-white/30 text-xs mt-2">
-            itdosentmatter
-          </p>
-          {/* Vulcan Salute - Live Long and Prosper */}
-          <div className="flex justify-center items-center gap-2 mt-4">
+          {/* Signature */}
+          <div className="flex flex-col justify-center items-center gap-1 mt-4">
             <span 
               className="text-2xl"
               style={{ 
-                color: '#00d9ff',
-                textShadow: '0 0 10px #00d9ff, 0 0 20px #00d9ff, 0 0 30px #00d9ff',
-                filter: 'drop-shadow(0 0 8px #00d9ff)'
+                color: '#8B4513',
+                textShadow: '0 0 10px #8B4513, 0 0 20px #a0522d, 0 0 30px #cd853f',
+                filter: 'drop-shadow(0 0 8px #8B4513)'
               }}
             >
               🖖
+            </span>
+            <span 
+              className="font-mono text-xs tracking-widest"
+              style={{ 
+                color: '#8B4513',
+                textShadow: '0 0 8px #8B4513'
+              }}
+            >
+              ELVTE
             </span>
           </div>
         </div>
