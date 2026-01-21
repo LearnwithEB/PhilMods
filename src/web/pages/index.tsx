@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, Suspense, useMemo } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Float, Stars, useGLTF } from "@react-three/drei";
+import { Float, Stars } from "@react-three/drei";
 import gsap from "gsap";
 import * as THREE from "three";
 
@@ -408,10 +408,9 @@ function FloatingCodeParticle({ x, y, z, speed, size }: {
   );
 }
 
-// MEOW Character 3D Model with progressive fill
-function MeowModel({ scrollProgress }: { scrollProgress: number }) {
+// Animated Wireframe Shape for 3D scene (replacing MEOW model)
+function WireframeShape({ scrollProgress }: { scrollProgress: number }) {
   const groupRef = useRef<THREE.Group>(null);
-  const { scene } = useGLTF('/meow.gltf');
   
   const fillOpacity = Math.min(scrollProgress * 3, 0.8);
 
@@ -422,36 +421,29 @@ function MeowModel({ scrollProgress }: { scrollProgress: number }) {
     }
   });
 
-  // Clone the scene to apply custom materials
-  const clonedScene = useMemo(() => {
-    const clone = scene.clone();
-    clone.traverse((child) => {
-      if ((child as THREE.Mesh).isMesh) {
-        const mesh = child as THREE.Mesh;
-        // Create a glowing terminal green material
-        mesh.material = new THREE.MeshStandardMaterial({
-          color: TERMINAL_GREEN,
-          emissive: TERMINAL_GREEN,
-          emissiveIntensity: 0.3 + fillOpacity * 0.5,
-          transparent: true,
-          opacity: 0.5 + fillOpacity * 0.5,
-          metalness: 0.5,
-          roughness: 0.3,
-        });
-      }
-    });
-    return clone;
-  }, [scene, fillOpacity]);
-
   return (
-    <group ref={groupRef} scale={1.5} position={[0, 0, 0]}>
-      <primitive object={clonedScene} />
+    <group ref={groupRef} scale={1.5} position={[0, 0.5, 0]}>
+      {/* Main wireframe icosahedron */}
+      <mesh>
+        <icosahedronGeometry args={[1, 1]} />
+        <meshBasicMaterial color={TERMINAL_GREEN} wireframe transparent opacity={0.8} />
+      </mesh>
+      {/* Inner solid with progressive fill based on scroll */}
+      <mesh scale={0.95}>
+        <icosahedronGeometry args={[1, 1]} />
+        <meshStandardMaterial 
+          color={TERMINAL_GREEN}
+          emissive={TERMINAL_GREEN}
+          emissiveIntensity={0.3 + fillOpacity * 0.5}
+          transparent
+          opacity={fillOpacity * 0.6}
+          metalness={0.5}
+          roughness={0.3}
+        />
+      </mesh>
     </group>
   );
 }
-
-// Preload the GLTF model
-useGLTF.preload('/meow.gltf');
 
 // Holographic Emitter Platform
 function HolographicEmitter({ scrollProgress }: { scrollProgress: number }) {
@@ -474,7 +466,7 @@ function HolographicEmitter({ scrollProgress }: { scrollProgress: number }) {
           <torusGeometry args={[1.8, 0.05, 16, 100]} />
           <meshBasicMaterial color={TERMINAL_GREEN} />
         </mesh>
-        <MeowModel scrollProgress={scrollProgress} />
+        <WireframeShape scrollProgress={scrollProgress} />
         <mesh position={[0, -0.5, 0]}>
           <cylinderGeometry args={[0.3, 1.5, 2, 32, 1, true]} />
           <meshBasicMaterial color={TERMINAL_GREEN} transparent opacity={0.1} side={THREE.DoubleSide} />
@@ -789,6 +781,54 @@ function CommissionButton() {
     >
       [ COMMISSION TODAY ]
     </a>
+  );
+}
+
+// Wireframe Character Display Component
+function WireframeCharacterDisplay() {
+  return (
+    <div className="relative w-full max-w-lg mx-auto mb-8">
+      {/* Glow effect behind image */}
+      <div className="absolute inset-0 blur-3xl opacity-40 bg-gradient-radial from-[#00ff41] to-transparent scale-110" />
+      
+      {/* Main image container */}
+      <div className="relative wireframe-float">
+        {/* Holographic border */}
+        <div className="absolute -inset-1 bg-gradient-to-r from-[#00ff41]/30 via-[#ff41b4]/30 to-[#00ff41]/30 rounded-xl blur-sm" />
+        
+        {/* Image */}
+        <img 
+          src="./wireframe-character.png" 
+          alt="3D Wireframe Character"
+          className="relative w-full h-auto rounded-lg shadow-[0_0_60px_rgba(0,255,65,0.3)]"
+          style={{
+            filter: 'drop-shadow(0 0 30px rgba(0,255,65,0.4))'
+          }}
+        />
+        
+        {/* Scan line overlay */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-lg opacity-30">
+          <div className="absolute w-full h-1 bg-gradient-to-b from-transparent via-[#00ff41] to-transparent animate-scanline" />
+        </div>
+        
+        {/* Holographic grid overlay */}
+        <div 
+          className="absolute inset-0 pointer-events-none rounded-lg opacity-10"
+          style={{
+            backgroundImage: `
+              linear-gradient(0deg, #00ff41 1px, transparent 1px),
+              linear-gradient(90deg, #00ff41 1px, transparent 1px)
+            `,
+            backgroundSize: '20px 20px'
+          }}
+        />
+      </div>
+      
+      {/* Tech label */}
+      <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-[#0d0618]/90 border border-[#00ff41]/40 rounded-full">
+        <span className="font-mono text-xs text-[#00ff41]/80">[ WIREFRAME VIEW ]</span>
+      </div>
+    </div>
   );
 }
 
@@ -1165,6 +1205,15 @@ function MobileFallback({ onSelectProject, selectedProject, wireframeMode, onTog
         <CommissionButton />
       </section>
       
+      {/* Featured Wireframe Character */}
+      <section className="py-20 px-4 flex flex-col items-center">
+        <h2 className="text-center font-mono text-[#00ff41] text-xl mb-8">[ FEATURED WORK ]</h2>
+        <WireframeCharacterDisplay />
+        <p className="mt-8 text-center font-mono text-white/50 text-sm max-w-md px-4">
+          High-quality character models with clean topology, optimized for games
+        </p>
+      </section>
+      
       {/* Projects */}
       <section className="py-20 px-4">
         <h2 className="text-center font-mono text-[#00ff41] text-2xl mb-12">[ PROJECT CAPSULES ]</h2>
@@ -1279,26 +1328,37 @@ function Index() {
       {/* Scrollable content overlay */}
       <div className="relative z-10">
         {/* Hero section */}
-        <section className="h-screen flex flex-col items-center justify-center pointer-events-none">
-          <h1 className="text-6xl md:text-[10rem] font-black tracking-[-0.05em] text-white/90 leading-none text-center">
+        <section className="min-h-screen flex flex-col items-center justify-center pointer-events-none py-20 px-4">
+          <h1 className="text-5xl md:text-[8rem] font-black tracking-[-0.05em] text-white/90 leading-none text-center mb-8">
             <span className="text-[#00ff41]">PHIL</span>MODS
           </h1>
-          <p className="mt-6 text-center font-mono text-[#00ff41]/80 text-sm md:text-lg tracking-wider max-w-2xl px-4">
+          <p className="text-center font-mono text-[#00ff41]/80 text-sm md:text-lg tracking-wider max-w-2xl px-4">
             Innovative 3D Modeling & Animation
           </p>
-          <p className="mt-2 text-center font-mono text-white/50 text-xs md:text-sm">
+          <p className="mt-2 text-center font-mono text-white/50 text-xs md:text-sm mb-8">
             Ready for the Metaverse
           </p>
           <CommissionButton />
-          <div className="mt-16 animate-bounce text-[#00ff41]">
+          <div className="mt-12 animate-bounce text-[#00ff41]">
             <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
             </svg>
           </div>
         </section>
 
+        {/* Wireframe Character Showcase */}
+        <section className="min-h-screen flex flex-col items-center justify-center py-20 px-4">
+          <h2 className="text-center font-mono text-[#00ff41] text-xl md:text-2xl mb-12">
+            [ FEATURED WORK ]
+          </h2>
+          <WireframeCharacterDisplay />
+          <p className="mt-12 text-center font-mono text-white/50 text-sm max-w-lg">
+            High-quality character models with clean topology, optimized for games and real-time rendering
+          </p>
+        </section>
+
         {/* Spacer for scroll tunnel */}
-        <div className="h-[100vh]" />
+        <div className="h-[50vh]" />
 
         {/* Projects Section - The Creative Void */}
         <section className="min-h-screen py-20 px-4 relative">
@@ -1422,13 +1482,22 @@ function Index() {
           50% { transform: translateY(-10px); }
         }
         
+        @keyframes wireframeFloat {
+          0%, 100% { transform: translateY(0) scale(1); }
+          50% { transform: translateY(-15px) scale(1.02); }
+        }
+        
+        .wireframe-float {
+          animation: wireframeFloat 4s ease-in-out infinite;
+        }
+        
         @keyframes scanline {
           0% { transform: translateY(-100%); }
-          100% { transform: translateY(1000%); }
+          100% { transform: translateY(10000%); }
         }
         
         .animate-scanline {
-          animation: scanline 3s linear infinite;
+          animation: scanline 4s linear infinite;
         }
         
         @keyframes scrollBadges {
