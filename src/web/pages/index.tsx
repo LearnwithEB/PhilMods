@@ -11,7 +11,7 @@ const ACCENT_PINK = "#ff41b4";
 
 // Boot sequence lines
 const BOOT_SEQUENCE = [
-  "INITIALIZING PHILLMODS PROTOCOL...",
+  "INITIALIZING PHILMODS PROTOCOL...",
   "LOADING CREATIVE SYSTEMS...",
   "CALIBRATING 3D RENDER ENGINE...",
   "SYNCING METAVERSE PROTOCOLS...",
@@ -559,7 +559,7 @@ function TerminalConsole({ nostalgiaMode, onToggle }: { nostalgiaMode: boolean; 
           <div className="w-3 h-3 rounded-full bg-red-500" />
           <div className="w-3 h-3 rounded-full bg-yellow-500" />
           <div className="w-3 h-3 rounded-full" style={{ backgroundColor: terminalColor }} />
-          <span className="ml-4 text-xs" style={{ color: terminalColor }}>phillmods_console.exe</span>
+          <span className="ml-4 text-xs" style={{ color: terminalColor }}>philmods_console.exe</span>
         </div>
         <pre className="whitespace-pre-wrap leading-relaxed" style={{ color: terminalColor }}>
           {displayedText}
@@ -980,7 +980,7 @@ function Footer() {
       <div className="max-w-4xl mx-auto">
         {/* Main footer content */}
         <div className="text-center mb-8">
-          <p className="font-mono text-[#00ff41] text-lg mb-2">PHILLMODS</p>
+          <p className="font-mono text-[#00ff41] text-lg mb-2">PHILMODS</p>
           <p className="font-mono text-white/50 text-sm">
             © 2025 | Bringing Ideas to Life Through Innovation
           </p>
@@ -1078,7 +1078,7 @@ function ServicesSection() {
           Transforming Imagination into Immersive 3D Realities
         </p>
         <p className="text-center font-mono text-white/40 text-sm mb-16 max-w-xl mx-auto">
-          At PhillMods, my mission is to bring your ideas to life through innovative 3D creation. I specialize in high-quality models and animations that cater to your unique requirements.
+          At PhilMods, my mission is to bring your ideas to life through innovative 3D creation. I specialize in high-quality models and animations that cater to your unique requirements.
         </p>
         
         {/* Services Grid */}
