@@ -786,144 +786,82 @@ function MatrixRain({ active }: { active: boolean }) {
   );
 }
 
-// Wireframe Rat Component - Runs across screen between MIT Achievement and Contact section
-function WireframeRat({ mitSectionEndRef, contactSectionStartRef }: { mitSectionEndRef: React.RefObject<HTMLDivElement | null>; contactSectionStartRef: React.RefObject<HTMLDivElement | null> }) {
-  const [hasRunDown, setHasRunDown] = useState(false);
-  const [hasRunUp, setHasRunUp] = useState(false);
+// Wireframe Rat Component - Uses Intersection Observer for reliable trigger
+function WireframeRat({ mitSectionEndRef }: { mitSectionEndRef: React.RefObject<HTMLDivElement | null>; contactSectionStartRef: React.RefObject<HTMLDivElement | null> }) {
   const [isRunning, setIsRunning] = useState(false);
+  const [hasTriggered, setHasTriggered] = useState(false);
   const [position, setPosition] = useState(-35);
   const [direction, setDirection] = useState<'right' | 'left'>('right');
   const legRef = useRef(0);
   const animationRef = useRef<number | null>(null);
-  const lastScrollY = useRef(0);
-  const scrollDirection = useRef<'down' | 'up'>('down');
   
-  // Track scroll direction
+  // Use Intersection Observer to trigger when MIT section is 50% visible
   useEffect(() => {
-    const updateScrollDirection = () => {
-      const currentScrollY = window.scrollY;
-      scrollDirection.current = currentScrollY > lastScrollY.current ? 'down' : 'up';
-      lastScrollY.current = currentScrollY;
-    };
+    if (!mitSectionEndRef.current || hasTriggered) return;
     
-    window.addEventListener('scroll', updateScrollDirection);
-    return () => window.removeEventListener('scroll', updateScrollDirection);
-  }, []);
-  
-  useEffect(() => {
-    const checkPosition = () => {
-      if (isRunning) return;
-      
-      // Simple scroll percentage trigger (75% down the page)
-      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const scrollPercent = (window.scrollY / scrollHeight) * 100;
-      
-      console.log('[RAT DEBUG] Scroll %:', scrollPercent.toFixed(1), 'Direction:', scrollDirection.current, 'HasRunDown:', hasRunDown, 'HasRunUp:', hasRunUp);
-      
-      // Trigger at 70-80% scroll range
-      const inTriggerZone = scrollPercent >= 70 && scrollPercent <= 85;
-      
-      // Check for scrolling DOWN through the zone
-      if (inTriggerZone && scrollDirection.current === 'down' && !hasRunDown) {
-        console.log('[RAT] 🐀 STARTING RUN DOWN!');
-        setIsRunning(true);
-        setDirection('right');
-        setPosition(-35);
-        setHasRunDown(true);
-        setHasRunUp(false);
-        
-        const startTime = Date.now();
-        const duration = 6500; // Slower - 6.5 seconds
-        
-        const animate = () => {
-          const elapsed = Date.now() - startTime;
-          const progress = Math.min(elapsed / duration, 1);
-          
-          const eased = progress < 0.3 
-            ? 1.5 * progress * progress 
-            : 1 - Math.pow(-2 * progress + 2, 2) / 2.5;
-          
-          const newPos = -35 + (eased * 170); // -35 to 135vw (left to right)
-          setPosition(newPos);
-          legRef.current += 0.3;
-          
-          if (progress < 1) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !hasTriggered && !isRunning) {
+            console.log('[RAT] 🐀 MIT section visible - STARTING RUN!');
+            setHasTriggered(true);
+            setIsRunning(true);
+            setDirection('right');
+            setPosition(-35);
+            
+            const startTime = Date.now();
+            const duration = 5000; // 5 seconds to cross
+            
+            const animate = () => {
+              const elapsed = Date.now() - startTime;
+              const progress = Math.min(elapsed / duration, 1);
+              
+              // Smooth easing
+              const eased = progress < 0.5 
+                ? 2 * progress * progress 
+                : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+              
+              const newPos = -35 + (eased * 170); // -35vw to 135vw
+              setPosition(newPos);
+              legRef.current += 0.35;
+              
+              if (progress < 1) {
+                animationRef.current = requestAnimationFrame(animate);
+              } else {
+                setIsRunning(false);
+                console.log('[RAT] 🐀 RUN COMPLETE');
+              }
+            };
+            
             animationRef.current = requestAnimationFrame(animate);
-          } else {
-            setIsRunning(false);
-            console.log('[RAT] 🐀 RUN DOWN COMPLETE');
           }
-        };
-        
-        animationRef.current = requestAnimationFrame(animate);
-      }
-      
-      // Check for scrolling UP through the zone  
-      if (inTriggerZone && scrollDirection.current === 'up' && !hasRunUp) {
-        console.log('[RAT] 🐀 STARTING RUN UP!');
-        setIsRunning(true);
-        setDirection('left');
-        setPosition(135);
-        setHasRunUp(true);
-        setHasRunDown(false);
-        
-        const startTime = Date.now();
-        const duration = 6500;
-        
-        const animate = () => {
-          const elapsed = Date.now() - startTime;
-          const progress = Math.min(elapsed / duration, 1);
-          
-          const eased = progress < 0.3 
-            ? 1.5 * progress * progress 
-            : 1 - Math.pow(-2 * progress + 2, 2) / 2.5;
-          
-          const newPos = 135 - (eased * 170); // 135 to -35vw (right to left)
-          setPosition(newPos);
-          legRef.current += 0.3;
-          
-          if (progress < 1) {
-            animationRef.current = requestAnimationFrame(animate);
-          } else {
-            setIsRunning(false);
-            console.log('[RAT] 🐀 RUN UP COMPLETE');
-          }
-        };
-        
-        animationRef.current = requestAnimationFrame(animate);
-      }
-    };
+        });
+      },
+      { threshold: 0.5 } // Trigger when 50% visible
+    );
     
-    window.addEventListener('scroll', checkPosition);
-    checkPosition();
+    observer.observe(mitSectionEndRef.current);
     
     return () => {
-      window.removeEventListener('scroll', checkPosition);
+      observer.disconnect();
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [hasRunDown, hasRunUp, isRunning]);
+  }, [mitSectionEndRef, hasTriggered, isRunning]);
   
-  // Reset flags when user scrolls far away from the zone
+  // Reset when scrolled back to top
   useEffect(() => {
-    const handleReset = () => {
-      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const scrollPercent = (window.scrollY / scrollHeight) * 100;
-      
-      // Reset when far above the zone (< 50%)
-      if (scrollPercent < 50) {
-        setHasRunDown(false);
-      }
-      // Reset when far below the zone (> 95%)
-      if (scrollPercent > 95) {
-        setHasRunUp(false);
+    const handleScroll = () => {
+      const scrollPercent = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+      if (scrollPercent < 30 && hasTriggered && !isRunning) {
+        setHasTriggered(false);
       }
     };
     
-    window.addEventListener('scroll', handleReset);
-    return () => window.removeEventListener('scroll', handleReset);
-  }, []);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [hasTriggered, isRunning]);
   
   if (!isRunning) return null;
   
@@ -935,7 +873,7 @@ function WireframeRat({ mitSectionEndRef, contactSectionStartRef }: { mitSection
       className="fixed pointer-events-none"
       style={{ 
         left: `${position}vw`, 
-        top: '45vh',
+        top: '50vh',
         transform: `translateY(${bodyBob}px) scaleX(${direction === 'left' ? -1 : 1})`,
         zIndex: 99999
       }}
@@ -944,46 +882,46 @@ function WireframeRat({ mitSectionEndRef, contactSectionStartRef }: { mitSection
       <div 
         className="absolute rounded-full"
         style={{
-          width: '400px',
-          height: '300px',
-          background: 'radial-gradient(ellipse at center, rgba(255,65,180,0.5) 0%, rgba(255,65,180,0.2) 40%, transparent 70%)',
-          transform: 'translate(-100px, -100px)',
-          filter: 'blur(30px)'
+          width: '500px',
+          height: '400px',
+          background: 'radial-gradient(ellipse at center, rgba(255,65,180,0.6) 0%, rgba(255,65,180,0.3) 40%, transparent 70%)',
+          transform: 'translate(-150px, -150px)',
+          filter: 'blur(40px)'
         }}
       />
       <svg 
-        width="280" 
-        height="180" 
+        width="300" 
+        height="200" 
         viewBox="0 0 80 50"
         style={{ 
-          filter: 'drop-shadow(0 0 30px #ff41b4) drop-shadow(0 0 60px #ff41b4) drop-shadow(0 0 15px #ff41b4)'
+          filter: 'drop-shadow(0 0 40px #ff41b4) drop-shadow(0 0 80px #ff41b4) drop-shadow(0 0 20px #ff41b4)'
         }}
       >
         {/* Body */}
         <ellipse 
           cx="35" cy="25" rx="20" ry="12" 
-          fill="rgba(255,65,180,0.15)" 
+          fill="rgba(255,65,180,0.2)" 
           stroke="#ff41b4" 
           strokeWidth="2.5"
         />
         {/* Head */}
         <circle 
           cx="58" cy="22" r="10" 
-          fill="rgba(255,65,180,0.15)" 
+          fill="rgba(255,65,180,0.2)" 
           stroke="#ff41b4" 
           strokeWidth="2.5"
         />
         {/* Ear */}
         <circle 
           cx="64" cy="14" r="5" 
-          fill="rgba(255,65,180,0.15)" 
+          fill="rgba(255,65,180,0.2)" 
           stroke="#ff41b4" 
           strokeWidth="2"
         />
         {/* Second ear */}
         <circle 
           cx="56" cy="12" r="4" 
-          fill="rgba(255,65,180,0.15)" 
+          fill="rgba(255,65,180,0.2)" 
           stroke="#ff41b4" 
           strokeWidth="2"
         />
@@ -1039,12 +977,12 @@ function WireframeRat({ mitSectionEndRef, contactSectionStartRef }: { mitSection
         <circle cx={50 + Math.sin(-legAngle * Math.PI / 180) * 10} cy="49" r="2" fill="#ff41b4" />
         <circle cx={30 + Math.sin(legAngle * Math.PI / 180) * 12} cy="49" r="2" fill="#ff41b4" />
       </svg>
-      {/* Squeak text bubble - bigger and more visible */}
+      {/* Squeak text bubble */}
       <div 
-        className="absolute -top-16 left-20 font-mono text-[#ff41b4] text-xl font-bold whitespace-nowrap"
+        className="absolute -top-16 left-20 font-mono text-[#ff41b4] text-2xl font-bold whitespace-nowrap"
         style={{ 
           animation: 'pulse 0.4s infinite',
-          textShadow: '0 0 25px #ff41b4, 0 0 50px #ff41b4, 0 0 75px #ff41b4'
+          textShadow: '0 0 30px #ff41b4, 0 0 60px #ff41b4, 0 0 90px #ff41b4'
         }}
       >
         *squeak squeak!*
@@ -1054,16 +992,91 @@ function WireframeRat({ mitSectionEndRef, contactSectionStartRef }: { mitSection
         {[0, 1, 2, 3, 4].map(i => (
           <div 
             key={i}
-            className="w-3 h-3 rounded-full bg-[#ff41b4]"
+            className="w-4 h-4 rounded-full bg-[#ff41b4]"
             style={{
               opacity: 0.9 - i * 0.15,
               transform: `scale(${1 - i * 0.15})`,
               animation: `pulse ${0.3 + i * 0.1}s infinite`,
-              boxShadow: '0 0 10px #ff41b4'
+              boxShadow: '0 0 15px #ff41b4'
             }}
           />
         ))}
       </div>
+    </div>
+  );
+}
+
+// Small fallback rat that sits in MIT Achievement section corner with gentle bounce
+function CornerRat() {
+  const [bounce, setBounce] = useState(0);
+  
+  useEffect(() => {
+    let frame = 0;
+    const animate = () => {
+      frame += 0.08;
+      setBounce(Math.sin(frame) * 4);
+      requestAnimationFrame(animate);
+    };
+    const id = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(id);
+  }, []);
+  
+  return (
+    <div 
+      className="absolute top-4 right-4 pointer-events-none"
+      style={{ 
+        transform: `translateY(${bounce}px)`,
+        zIndex: 50
+      }}
+    >
+      <svg 
+        width="60" 
+        height="40" 
+        viewBox="0 0 80 50"
+        style={{ 
+          filter: 'drop-shadow(0 0 10px #ff41b4) drop-shadow(0 0 20px #ff41b4)'
+        }}
+      >
+        {/* Body */}
+        <ellipse 
+          cx="35" cy="25" rx="18" ry="10" 
+          fill="rgba(255,65,180,0.15)" 
+          stroke="#ff41b4" 
+          strokeWidth="2"
+        />
+        {/* Head */}
+        <circle 
+          cx="55" cy="23" r="8" 
+          fill="rgba(255,65,180,0.15)" 
+          stroke="#ff41b4" 
+          strokeWidth="2"
+        />
+        {/* Ear */}
+        <circle 
+          cx="60" cy="16" r="4" 
+          fill="rgba(255,65,180,0.15)" 
+          stroke="#ff41b4" 
+          strokeWidth="1.5"
+        />
+        {/* Eye */}
+        <circle cx="58" cy="21" r="2" fill="#ff41b4" />
+        {/* Nose */}
+        <circle cx="63" cy="24" r="1.5" fill="#ff41b4" />
+        {/* Tail */}
+        <path 
+          d="M 17 25 Q 8 18, 5 28 Q 3 38, 10 32"
+          fill="none" 
+          stroke="#ff41b4" 
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+        {/* Whiskers */}
+        <line x1="62" y1="24" x2="72" y2="20" stroke="#ff41b4" strokeWidth="1" />
+        <line x1="62" y1="24" x2="72" y2="26" stroke="#ff41b4" strokeWidth="1" />
+        {/* Front legs */}
+        <line x1="42" y1="33" x2="44" y2="42" stroke="#ff41b4" strokeWidth="1.5" strokeLinecap="round" />
+        <line x1="28" y1="33" x2="26" y2="42" stroke="#ff41b4" strokeWidth="1.5" strokeLinecap="round" />
+      </svg>
     </div>
   );
 }
@@ -1631,6 +1644,9 @@ function ServicesSection({ mitSectionEndRef }: { mitSectionEndRef?: React.RefObj
                 {/* Shimmer overlay effect */}
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent 
                                -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out" />
+                
+                {/* Small corner rat - always visible fallback */}
+                <CornerRat />
               </div>
               
               {/* Corner accents */}
