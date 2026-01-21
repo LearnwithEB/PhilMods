@@ -24,37 +24,41 @@ const PROJECTS = [
     id: 1,
     title: "GOAT CHARACTER V1",
     techSpecs: "Blender | Unreal Engine | Game-Ready",
-    polycount: "24,567",
-    textures: "4K PBR",
-    rigged: "Full Body + Face",
-    description: "Fully rigged anthropomorphic goat character with stylized design, optimized for real-time rendering in Unreal Engine."
+    polycount: "???",
+    textures: "Loading...",
+    rigged: "In Progress",
+    description: "Something special is cooking... 🐐 First character model dropping soon. Watch this space evolve!",
+    status: "wip"
   },
   {
     id: 2,
     title: "ENVIRONMENT PACK",
     techSpecs: "Blender | Unity | Modular",
-    polycount: "156,890",
-    textures: "2K Tileable",
+    polycount: "???",
+    textures: "Processing...",
     rigged: "N/A",
-    description: "Modular sci-fi environment kit featuring industrial corridors, terminals, and atmospheric props."
+    description: "Building immersive worlds one vertex at a time. New environments materializing...",
+    status: "coming"
   },
   {
     id: 3,
     title: "CHARACTER RIGGING DEMO",
     techSpecs: "Blender | Maya | Animation-Ready",
-    polycount: "18,234",
-    textures: "4K PBR",
-    rigged: "Advanced IK/FK",
-    description: "Demonstration of advanced rigging techniques including IK/FK switching, facial rig, and custom controllers."
+    polycount: "???",
+    textures: "Rendering...",
+    rigged: "Calculating...",
+    description: "Loading creativity... Rigging showcase coming soon. Stay tuned for the full story!",
+    status: "coming"
   },
   {
     id: 4,
     title: "UNREAL ENGINE REAL-TIME",
     techSpecs: "Unreal Engine 5 | Nanite | Lumen",
-    polycount: "2.4M (Nanite)",
-    textures: "8K Virtual",
-    rigged: "Sequencer Ready",
-    description: "Real-time cinematic showcase leveraging UE5's Nanite and Lumen for photorealistic rendering."
+    polycount: "∞",
+    textures: "Buffering...",
+    rigged: "Pending",
+    description: "New projects materializing... Real-time rendering demo in the works. More coming soon...",
+    status: "coming"
   }
 ];
 
@@ -291,6 +295,8 @@ function ProjectCapsule({ project, delay, onSelect }: {
   onSelect: () => void;
 }) {
   const [isHovered, setIsHovered] = useState(false);
+  const isComingSoon = project.status === "coming";
+  const isWip = project.status === "wip";
   
   return (
     <div
@@ -310,6 +316,31 @@ function ProjectCapsule({ project, delay, onSelect }: {
                          ? 'border-[#ff41b4]/80 shadow-[0_0_40px_rgba(255,65,180,0.4)]' 
                          : 'border-[#ff41b4]/30 shadow-[0_0_20px_rgba(255,65,180,0.1)]'}`}>
         
+        {/* Status Badge */}
+        {isWip && (
+          <div className="absolute -top-2 -right-2 z-20">
+            <div className="relative px-3 py-1 font-mono text-[10px] text-[#1a0b2e] bg-[#ff41b4] rounded-full 
+                           shadow-[0_0_15px_rgba(255,65,180,0.6)] animate-pulse">
+              <span className="relative flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 bg-[#1a0b2e] rounded-full animate-ping" />
+                WORK IN PROGRESS
+              </span>
+            </div>
+          </div>
+        )}
+        
+        {isComingSoon && (
+          <div className="absolute -top-2 -right-2 z-20">
+            <div className="relative px-3 py-1 font-mono text-[10px] text-[#ff41b4] bg-[#1a0b2e] border border-[#ff41b4]/50 rounded-full 
+                           shadow-[0_0_10px_rgba(255,65,180,0.3)]">
+              <span className="flex items-center gap-1.5">
+                <span className="inline-block animate-spin" style={{ animationDuration: '3s' }}>⟳</span>
+                COMING SOON
+              </span>
+            </div>
+          </div>
+        )}
+        
         {/* Mini 3D preview */}
         <div className="w-full aspect-video bg-[#1a0b2e] rounded-lg mb-4 overflow-hidden relative">
           <Canvas camera={{ position: [0, 0, 2.5], fov: 50 }}>
@@ -318,10 +349,45 @@ function ProjectCapsule({ project, delay, onSelect }: {
             <Float speed={isHovered ? 0.5 : 2} rotationIntensity={isHovered ? 0.2 : 0.5}>
               <mesh rotation={[0.5, 0, 0]}>
                 <icosahedronGeometry args={[0.8, 1]} />
-                <meshBasicMaterial color={TERMINAL_GREEN} wireframe />
+                <meshBasicMaterial color={TERMINAL_GREEN} wireframe opacity={isComingSoon ? 0.5 : 1} transparent />
               </mesh>
             </Float>
           </Canvas>
+          
+          {/* Coming soon overlay */}
+          {isComingSoon && (
+            <div className="absolute inset-0 flex items-center justify-center bg-[#1a0b2e]/60 backdrop-blur-[1px]">
+              <div className="text-center">
+                <div className="font-mono text-[#ff41b4]/80 text-xs animate-pulse">
+                  [ LOADING CREATIVITY... ]
+                </div>
+                <div className="mt-2 flex justify-center gap-1">
+                  {[...Array(3)].map((_, i) => (
+                    <div 
+                      key={i}
+                      className="w-1.5 h-1.5 bg-[#ff41b4] rounded-full animate-bounce"
+                      style={{ animationDelay: `${i * 0.15}s` }}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {/* WIP progress bar */}
+          {isWip && (
+            <div className="absolute bottom-2 left-2 right-2">
+              <div className="h-1 bg-[#ff41b4]/20 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-[#ff41b4] rounded-full animate-pulse"
+                  style={{ width: '65%', boxShadow: '0 0 10px rgba(255,65,180,0.8)' }}
+                />
+              </div>
+              <div className="font-mono text-[8px] text-[#ff41b4]/60 mt-1 text-right">
+                BUILDING... 65%
+              </div>
+            </div>
+          )}
           
           {/* Scan line effect */}
           <div className="absolute inset-0 pointer-events-none opacity-20">
@@ -335,15 +401,20 @@ function ProjectCapsule({ project, delay, onSelect }: {
           {project.title}
         </h3>
         
+        {/* Description */}
+        <p className="font-mono text-xs text-white/60 mb-2 line-clamp-2">
+          {project.description}
+        </p>
+        
         {/* Tech specs */}
-        <p className="font-mono text-xs text-white/50">
+        <p className="font-mono text-xs text-[#ff41b4]/50">
           {project.techSpecs}
         </p>
         
         {/* Hover indicator */}
         <div className={`absolute bottom-2 right-2 font-mono text-[10px] text-[#ff41b4]/60 
                          transition-opacity duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
-          [ CLICK TO EXPAND ]
+          [ CLICK TO EXPLORE ]
         </div>
       </div>
     </div>
