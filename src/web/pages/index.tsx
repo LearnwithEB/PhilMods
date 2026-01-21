@@ -786,35 +786,35 @@ function MatrixRain({ active }: { active: boolean }) {
   );
 }
 
-// Wireframe Rat Component - Runs across screen at 50% scroll
+// Wireframe Rat Component - Runs across screen at 30% scroll
 function WireframeRat({ scrollProgress }: { scrollProgress: number }) {
   const [hasRun, setHasRun] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
-  const [position, setPosition] = useState(-100);
+  const [position, setPosition] = useState(-30);
   const legRef = useRef(0);
   const animationRef = useRef<number | null>(null);
   
   useEffect(() => {
-    // Trigger rat run at ~50% scroll progress
-    if (scrollProgress >= 0.45 && scrollProgress <= 0.55 && !hasRun && !isRunning) {
+    // Trigger rat run at ~30% scroll progress (earlier trigger)
+    if (scrollProgress >= 0.25 && scrollProgress <= 0.40 && !hasRun && !isRunning) {
       setIsRunning(true);
-      setPosition(-100);
+      setPosition(-30);
       
       const startTime = Date.now();
-      const duration = 4000; // 4 seconds to cross screen
+      const duration = 5000; // 5 seconds to cross screen (slower)
       
       const animate = () => {
         const elapsed = Date.now() - startTime;
         const progress = Math.min(elapsed / duration, 1);
         
-        // Eased movement
+        // Eased movement - slower acceleration
         const eased = progress < 0.5 
           ? 2 * progress * progress 
           : 1 - Math.pow(-2 * progress + 2, 2) / 2;
         
-        const newPos = -100 + (eased * 220); // -100 to 120vw
+        const newPos = -30 + (eased * 160); // -30 to 130vw
         setPosition(newPos);
-        legRef.current += 0.4;
+        legRef.current += 0.3; // Slower leg movement
         
         if (progress < 1) {
           animationRef.current = requestAnimationFrame(animate);
@@ -836,104 +836,148 @@ function WireframeRat({ scrollProgress }: { scrollProgress: number }) {
   
   // Reset when user scrolls back up
   useEffect(() => {
-    if (scrollProgress < 0.3 && hasRun) {
+    if (scrollProgress < 0.15 && hasRun) {
       setHasRun(false);
     }
   }, [scrollProgress, hasRun]);
   
   if (!isRunning) return null;
   
-  const legAngle = Math.sin(legRef.current) * 30;
-  const bodyBob = Math.sin(legRef.current * 2) * 3;
+  const legAngle = Math.sin(legRef.current) * 35;
+  const bodyBob = Math.sin(legRef.current * 2) * 8;
   
   return (
     <div 
-      className="fixed z-50 pointer-events-none"
+      className="fixed pointer-events-none"
       style={{ 
         left: `${position}vw`, 
-        top: '50vh',
-        transform: `translateY(${bodyBob}px)`
+        top: '45vh',
+        transform: `translateY(${bodyBob}px)`,
+        zIndex: 9999
       }}
     >
+      {/* Glow backdrop */}
+      <div 
+        className="absolute inset-0 rounded-full"
+        style={{
+          width: '240px',
+          height: '160px',
+          background: 'radial-gradient(ellipse at center, rgba(255,65,180,0.3) 0%, transparent 70%)',
+          transform: 'translate(-40px, -40px)',
+          filter: 'blur(20px)'
+        }}
+      />
       <svg 
-        width="80" 
-        height="50" 
+        width="200" 
+        height="130" 
         viewBox="0 0 80 50"
-        className="transform scale-x-1"
-        style={{ filter: 'drop-shadow(0 0 10px #ff41b4)' }}
+        style={{ 
+          filter: 'drop-shadow(0 0 25px #ff41b4) drop-shadow(0 0 50px #ff41b4) drop-shadow(0 0 10px #ff41b4)'
+        }}
       >
         {/* Body */}
         <ellipse 
           cx="35" cy="25" rx="20" ry="12" 
-          fill="none" 
+          fill="rgba(255,65,180,0.1)" 
           stroke="#ff41b4" 
-          strokeWidth="2"
+          strokeWidth="2.5"
         />
         {/* Head */}
         <circle 
           cx="58" cy="22" r="10" 
-          fill="none" 
+          fill="rgba(255,65,180,0.1)" 
           stroke="#ff41b4" 
-          strokeWidth="2"
+          strokeWidth="2.5"
         />
         {/* Ear */}
         <circle 
           cx="64" cy="14" r="5" 
-          fill="none" 
-          stroke="#ff41b4" 
-          strokeWidth="1.5"
-        />
-        {/* Eye */}
-        <circle cx="62" cy="20" r="2" fill="#ff41b4" />
-        {/* Nose */}
-        <circle cx="68" cy="24" r="1.5" fill="#ff41b4" />
-        {/* Whiskers */}
-        <line x1="67" y1="24" x2="78" y2="20" stroke="#ff41b4" strokeWidth="1" />
-        <line x1="67" y1="24" x2="78" y2="24" stroke="#ff41b4" strokeWidth="1" />
-        <line x1="67" y1="24" x2="78" y2="28" stroke="#ff41b4" strokeWidth="1" />
-        {/* Tail */}
-        <path 
-          d="M 15 25 Q 5 15, 2 30 Q 0 40, 8 35" 
-          fill="none" 
+          fill="rgba(255,65,180,0.1)" 
           stroke="#ff41b4" 
           strokeWidth="2"
+        />
+        {/* Second ear */}
+        <circle 
+          cx="56" cy="12" r="4" 
+          fill="rgba(255,65,180,0.1)" 
+          stroke="#ff41b4" 
+          strokeWidth="2"
+        />
+        {/* Eye */}
+        <circle cx="62" cy="20" r="2.5" fill="#ff41b4" />
+        {/* Eye shine */}
+        <circle cx="63" cy="19" r="1" fill="#fff" />
+        {/* Nose */}
+        <circle cx="68" cy="24" r="2" fill="#ff41b4" />
+        {/* Whiskers */}
+        <line x1="67" y1="24" x2="80" y2="18" stroke="#ff41b4" strokeWidth="1.5" />
+        <line x1="67" y1="24" x2="80" y2="24" stroke="#ff41b4" strokeWidth="1.5" />
+        <line x1="67" y1="24" x2="80" y2="30" stroke="#ff41b4" strokeWidth="1.5" />
+        {/* Tail - wavy */}
+        <path 
+          d={`M 15 25 Q ${5 + Math.sin(legRef.current * 0.5) * 3} 15, 2 ${30 + Math.sin(legRef.current) * 5} Q ${-2 + Math.sin(legRef.current * 0.7) * 2} 42, 8 35`}
+          fill="none" 
+          stroke="#ff41b4" 
+          strokeWidth="2.5"
           strokeLinecap="round"
         />
         {/* Front leg */}
         <line 
-          x1="45" y1="35" x2={45 + Math.sin(legAngle * Math.PI / 180) * 8} y2="48"
+          x1="45" y1="35" x2={45 + Math.sin(legAngle * Math.PI / 180) * 10} y2="50"
           stroke="#ff41b4" 
-          strokeWidth="2"
+          strokeWidth="2.5"
           strokeLinecap="round"
         />
         {/* Back leg */}
         <line 
-          x1="25" y1="35" x2={25 + Math.sin(-legAngle * Math.PI / 180) * 10} y2="48"
+          x1="25" y1="35" x2={25 + Math.sin(-legAngle * Math.PI / 180) * 12} y2="50"
           stroke="#ff41b4" 
-          strokeWidth="2"
+          strokeWidth="2.5"
           strokeLinecap="round"
         />
         {/* Second front leg */}
         <line 
-          x1="50" y1="35" x2={50 + Math.sin(-legAngle * Math.PI / 180) * 8} y2="48"
+          x1="50" y1="35" x2={50 + Math.sin(-legAngle * Math.PI / 180) * 10} y2="50"
           stroke="#ff41b4" 
-          strokeWidth="2"
+          strokeWidth="2.5"
           strokeLinecap="round"
         />
         {/* Second back leg */}
         <line 
-          x1="30" y1="35" x2={30 + Math.sin(legAngle * Math.PI / 180) * 10} y2="48"
+          x1="30" y1="35" x2={30 + Math.sin(legAngle * Math.PI / 180) * 12} y2="50"
           stroke="#ff41b4" 
-          strokeWidth="2"
+          strokeWidth="2.5"
           strokeLinecap="round"
         />
+        {/* Little feet */}
+        <circle cx={45 + Math.sin(legAngle * Math.PI / 180) * 10} cy="49" r="2" fill="#ff41b4" />
+        <circle cx={25 + Math.sin(-legAngle * Math.PI / 180) * 12} cy="49" r="2" fill="#ff41b4" />
+        <circle cx={50 + Math.sin(-legAngle * Math.PI / 180) * 10} cy="49" r="2" fill="#ff41b4" />
+        <circle cx={30 + Math.sin(legAngle * Math.PI / 180) * 12} cy="49" r="2" fill="#ff41b4" />
       </svg>
-      {/* Squeak text bubble */}
+      {/* Squeak text bubble - bigger and more visible */}
       <div 
-        className="absolute -top-8 left-10 font-mono text-[#ff41b4] text-xs opacity-80"
-        style={{ animation: 'pulse 0.5s infinite' }}
+        className="absolute -top-12 left-16 font-mono text-[#ff41b4] text-lg font-bold"
+        style={{ 
+          animation: 'pulse 0.4s infinite',
+          textShadow: '0 0 20px #ff41b4, 0 0 40px #ff41b4'
+        }}
       >
-        *squeak!*
+        *squeak squeak!*
+      </div>
+      {/* Trail particles */}
+      <div className="absolute -left-8 top-1/2 flex gap-2">
+        {[0, 1, 2, 3].map(i => (
+          <div 
+            key={i}
+            className="w-2 h-2 rounded-full bg-[#ff41b4]"
+            style={{
+              opacity: 0.8 - i * 0.2,
+              transform: `scale(${1 - i * 0.2})`,
+              animation: `pulse ${0.3 + i * 0.1}s infinite`
+            }}
+          />
+        ))}
       </div>
     </div>
   );
