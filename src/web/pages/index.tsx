@@ -1517,6 +1517,112 @@ function ServicesSection() {
             [ START YOUR PROJECT ]
           </button>
         </div>
+        
+        {/* MIT Reality Hack Featured Achievement Section */}
+        <div className="mt-24 relative">
+          {/* Decorative top line */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-px bg-gradient-to-r from-transparent via-[#ff41b4]/50 to-transparent" />
+          
+          <div className="text-center pt-12">
+            {/* Achievement Badge Header */}
+            <div className="inline-block mb-8">
+              <div className="px-6 py-2 border border-[#00d9ff]/40 bg-[#00d9ff]/5 rounded-full backdrop-blur-sm
+                             shadow-[0_0_20px_rgba(0,217,255,0.2)]">
+                <span className="font-mono text-xs md:text-sm tracking-[0.3em] text-[#00d9ff] uppercase">
+                  ✦ Featured Achievement ✦
+                </span>
+              </div>
+            </div>
+            
+            {/* Title */}
+            <h3 className="font-mono text-[#ff41b4] text-xl md:text-2xl mb-2 tracking-wide">
+              MIT Reality Hack Art 2026
+            </h3>
+            <p className="font-mono text-white/60 text-sm md:text-base mb-8 tracking-wider uppercase">
+              Selected Exhibitor
+            </p>
+            
+            {/* Neon Sign Image with Glow Effects */}
+            <div className="relative max-w-md mx-auto mb-10 group">
+              {/* Outer glow */}
+              <div className="absolute -inset-4 bg-gradient-to-r from-[#ff41b4]/20 via-[#00d9ff]/20 to-[#ff41b4]/20 
+                             rounded-2xl blur-xl opacity-60 group-hover:opacity-100 transition-opacity duration-700
+                             animate-pulse" style={{ animationDuration: '3s' }} />
+              
+              {/* Inner container with border */}
+              <div className="relative border-2 border-[#ff41b4]/30 rounded-xl overflow-hidden 
+                             bg-[#0d0618]/60 backdrop-blur-sm p-2
+                             group-hover:border-[#ff41b4]/60 transition-all duration-500
+                             shadow-[0_0_30px_rgba(255,65,180,0.3),0_0_60px_rgba(0,217,255,0.2)]
+                             group-hover:shadow-[0_0_50px_rgba(255,65,180,0.5),0_0_80px_rgba(0,217,255,0.3)]">
+                
+                {/* The neon sign image */}
+                <img 
+                  src="./d6f928be-4a22-4345-b58d-3b2faa80947e.png" 
+                  alt="MIT Reality Hack Neon Sign"
+                  className="w-full h-auto rounded-lg
+                            group-hover:scale-[1.02] transition-transform duration-700"
+                />
+                
+                {/* Shimmer overlay effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent 
+                               -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out" />
+              </div>
+              
+              {/* Corner accents */}
+              <div className="absolute -top-1 -left-1 w-4 h-4 border-t-2 border-l-2 border-[#00d9ff]/60" />
+              <div className="absolute -top-1 -right-1 w-4 h-4 border-t-2 border-r-2 border-[#00d9ff]/60" />
+              <div className="absolute -bottom-1 -left-1 w-4 h-4 border-b-2 border-l-2 border-[#ff41b4]/60" />
+              <div className="absolute -bottom-1 -right-1 w-4 h-4 border-b-2 border-r-2 border-[#ff41b4]/60" />
+            </div>
+            
+            {/* Profile Photo Placeholder */}
+            <div className="relative max-w-[180px] mx-auto mb-6">
+              {/* Decorative frame */}
+              <div className="relative aspect-square rounded-full border-2 border-[#00d9ff]/40 
+                             bg-[#0d0618]/80 backdrop-blur-sm overflow-hidden
+                             shadow-[0_0_25px_rgba(0,217,255,0.2),inset_0_0_30px_rgba(0,217,255,0.1)]
+                             group">
+                {/* Inner decorative rings */}
+                <div className="absolute inset-2 rounded-full border border-[#00d9ff]/20" />
+                <div className="absolute inset-4 rounded-full border border-[#ff41b4]/10" />
+                
+                {/* Placeholder icon */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <svg 
+                    className="w-16 h-16 text-[#00d9ff]/30" 
+                    fill="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                  </svg>
+                </div>
+                
+                {/* Scan line effect */}
+                <div className="absolute inset-0 opacity-30 pointer-events-none"
+                     style={{
+                       background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,217,255,0.03) 2px, rgba(0,217,255,0.03) 4px)'
+                     }} />
+              </div>
+              
+              {/* Animated ring around photo */}
+              <div className="absolute -inset-1 rounded-full border border-[#00d9ff]/20 animate-pulse" 
+                   style={{ animationDuration: '2s' }} />
+            </div>
+            
+            {/* Name with Tron Blue styling */}
+            <div className="relative inline-block">
+              <h4 className="font-mono text-2xl md:text-3xl font-bold tracking-wider
+                           text-[#00d9ff] 
+                           drop-shadow-[0_0_10px_rgba(0,217,255,0.5)]
+                           hover:drop-shadow-[0_0_20px_rgba(0,217,255,0.8)]
+                           transition-all duration-300">
+                Mya Crevatis
+              </h4>
+              <div className="mt-2 w-24 h-px mx-auto bg-gradient-to-r from-transparent via-[#00d9ff]/50 to-transparent" />
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );
