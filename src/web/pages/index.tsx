@@ -1,8 +1,11 @@
 import { useState, useEffect, useRef, Suspense, useMemo } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Float, Stars } from "@react-three/drei";
+import { Float, Stars, useGLTF } from "@react-three/drei";
 import gsap from "gsap";
 import * as THREE from "three";
+
+// Preload the meow.glb model for optimization
+useGLTF.preload('/meow.glb');
 
 // Color palette
 const VOID_PURPLE = "#1a0b2e";
@@ -430,6 +433,31 @@ function WireframeCharacter({ scrollProgress }: { scrollProgress: number }) {
   );
 }
 
+// MeowModel Component - loads meow.glb and layers it above the scene
+// Note: User needs to place their meow.glb file in the public folder for this to work
+function MeowModel({ scrollProgress }: { scrollProgress: number }) {
+  const groupRef = useRef<THREE.Group>(null);
+  const { scene } = useGLTF('/meow.glb');
+  const clonedScene = useMemo(() => scene.clone(), [scene]);
+
+  useFrame((state) => {
+    if (groupRef.current) {
+      // Synchronize rotation with scroll
+      groupRef.current.rotation.y = state.clock.elapsedTime * 0.3 + scrollProgress * 0.001;
+    }
+  });
+
+  return (
+    <Float speed={1.5} rotationIntensity={0.3}>
+      <group ref={groupRef} position={[0, 1.5, 2]} scale={2.5}>
+        <primitive object={clonedScene} />
+        {/* Additional rim lighting for the model */}
+        <pointLight position={[0, 5, 5]} color={TERMINAL_GREEN} intensity={2} />
+      </group>
+    </Float>
+  );
+}
+
 // Holographic Emitter Platform (now displays wireframe character image)
 function HolographicEmitter({ scrollProgress }: { scrollProgress: number }) {
   const groupRef = useRef<THREE.Group>(null);
@@ -494,6 +522,11 @@ function Scene({ scrollProgress, started }: { scrollProgress: number; started: b
       <group position={[0, 0, 0]}>
         <HolographicEmitter scrollProgress={scrollProgress} />
       </group>
+
+      {/* MeowModel - layers above the existing scene */}
+      <Suspense fallback={null}>
+        <MeowModel scrollProgress={scrollProgress} />
+      </Suspense>
 
       {/* Tunnel elements */}
       {[...Array(20)].map((_, i) => (
