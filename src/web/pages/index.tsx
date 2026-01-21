@@ -810,20 +810,21 @@ function WireframeRat({ mitSectionEndRef }: { mitSectionEndRef: React.RefObject<
             setPosition(-35);
             
             const startTime = Date.now();
-            const duration = 5000; // 5 seconds to cross
+            const duration = 4000; // 4 seconds for snappier movement
             
             const animate = () => {
               const elapsed = Date.now() - startTime;
               const progress = Math.min(elapsed / duration, 1);
               
-              // Smooth easing
+              // Smooth cubic-bezier ease-in-out for natural acceleration/deceleration
+              // Using bezier curve approximation: cubic-bezier(0.4, 0, 0.2, 1)
               const eased = progress < 0.5 
-                ? 2 * progress * progress 
-                : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+                ? 4 * progress * progress * progress 
+                : 1 - Math.pow(-2 * progress + 2, 3) / 2;
               
               const newPos = -35 + (eased * 170); // -35vw to 135vw
               setPosition(newPos);
-              legRef.current += 0.35;
+              legRef.current += 0.45; // Faster leg frequency to match 4s duration
               
               if (progress < 1) {
                 animationRef.current = requestAnimationFrame(animate);
