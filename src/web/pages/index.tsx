@@ -1147,7 +1147,7 @@ function MobileFallback({ onSelectProject, selectedProject, wireframeMode, onTog
           ))}
         </div>
         <h1 className="text-5xl md:text-8xl font-black text-center mb-4 tracking-tighter">
-          <span className="text-[#00ff41]">PHILL</span>MODS
+          <span className="text-[#00ff41]">PHIL</span>MODS
         </h1>
         <p className="text-center text-[#00ff41]/70 font-mono text-sm md:text-base max-w-md">
           Innovative 3D Modeling & Animation
@@ -1274,7 +1274,7 @@ function Index() {
         {/* Hero section */}
         <section className="h-screen flex flex-col items-center justify-center pointer-events-none">
           <h1 className="text-6xl md:text-[10rem] font-black tracking-[-0.05em] text-white/90 leading-none text-center">
-            <span className="text-[#00ff41]">PHILL</span>MODS
+            <span className="text-[#00ff41]">PHIL</span>MODS
           </h1>
           <p className="mt-6 text-center font-mono text-[#00ff41]/80 text-sm md:text-lg tracking-wider max-w-2xl px-4">
             Innovative 3D Modeling & Animation
