@@ -352,7 +352,6 @@ function ProjectCapsule({ project, delay, onSelect }: {
   const isComingSoon = project.status === "coming";
   const isWip = project.status === "wip";
   const isFeatured = project.status === "featured";
-  const hasImage = 'image' in project && project.image;
   
   return (
     <div
@@ -413,27 +412,18 @@ function ProjectCapsule({ project, delay, onSelect }: {
           </div>
         )}
         
-        {/* Mini 3D preview or Image */}
+        {/* Mini 3D preview */}
         <div className="w-full aspect-video bg-[#1a0b2e] rounded-lg mb-4 overflow-hidden relative">
-          {hasImage ? (
-            <img 
-              src={project.image as string} 
-              alt={project.title}
-              className={`w-full h-full object-cover object-top transition-transform duration-500
-                          ${isHovered ? 'scale-110' : 'scale-100'}`}
-            />
-          ) : (
-            <Canvas camera={{ position: [0, 0, 2.5], fov: 50 }}>
-              <ambientLight intensity={0.4} />
-              <pointLight position={[3, 3, 3]} intensity={0.8} color={TERMINAL_GREEN} />
-              <Float speed={isHovered ? 0.5 : 2} rotationIntensity={isHovered ? 0.2 : 0.5}>
-                <mesh rotation={[0.5, 0, 0]}>
-                  <icosahedronGeometry args={[0.8, 1]} />
-                  <meshBasicMaterial color={TERMINAL_GREEN} wireframe opacity={isComingSoon ? 0.5 : 1} transparent />
-                </mesh>
-              </Float>
-            </Canvas>
-          )}
+          <Canvas camera={{ position: [0, 0, 2.5], fov: 50 }}>
+            <ambientLight intensity={0.4} />
+            <pointLight position={[3, 3, 3]} intensity={0.8} color={TERMINAL_GREEN} />
+            <Float speed={isHovered ? 0.5 : 2} rotationIntensity={isHovered ? 0.2 : 0.5}>
+              <mesh rotation={[0.5, 0, 0]}>
+                <icosahedronGeometry args={[0.8, 1]} />
+                <meshBasicMaterial color={TERMINAL_GREEN} wireframe opacity={isComingSoon ? 0.5 : 1} transparent />
+              </mesh>
+            </Float>
+          </Canvas>
           
           {/* Coming soon overlay */}
           {isComingSoon && (
@@ -1161,7 +1151,7 @@ function WireframeCharacterDisplay() {
         
         {/* Image */}
         <img 
-          src="./wireframe-character.png" 
+          src="./character-fullbody.png" 
           alt="3D Wireframe Character"
           className="relative w-full h-auto rounded-lg shadow-[0_0_60px_rgba(255,65,180,0.3)]"
           style={{
